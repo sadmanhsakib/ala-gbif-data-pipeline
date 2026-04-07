@@ -15,10 +15,12 @@ ALA_URL = os.getenv("ALA_URL")
 
 
 def main():
-    get_ala_data(KANGAROO_SCIENTIFIC_NAME)
+    file_name = get_ala_data(WOMBAT_SCIENTIFIC_NAME)
+    
+    clean_data(file_name)
 
 
-def get_gbif_data(species_key: int):
+def get_gbif_data(species_key: int) -> str:
     offset = 0
     results = []
 
@@ -61,8 +63,10 @@ def get_gbif_data(species_key: int):
         json.dump(results, file)
     print(f"✅Data exported to {file_name} successfully. ")
 
+    return file_name
 
-def get_ala_data(species_scientific_name: str):
+
+def get_ala_data(species_scientific_name: str) -> str:
     offset = 0
     results = []
 
@@ -108,6 +112,8 @@ def get_ala_data(species_scientific_name: str):
         json.dump(results, file)
     print(f"✅Data exported to {file_name} successfully. ")
 
+    return file_name
+
 
 def clean_data(file_name: str):
     # loading the file
@@ -117,11 +123,35 @@ def clean_data(file_name: str):
     # loading the dataframe
     df = pd.DataFrame(data)
 
-    # only keeping rows in Australia
-    df = df[df["countryCode"] == "AU"]
-
-    # removing the unnecessary columns
-    df = df[["species", "countryCode", "year", "decimalLatitude", "decimalLongitude"]]
+    # for GBIF data
+    try:
+        # only keeping rows in Australia
+        df = df[df["countryCode"] == "AU"]
+        # removing the unnecessary columns
+        df = df[
+            ["species", "countryCode", "year", "decimalLatitude", "decimalLongitude"]
+        ]
+    # for ALA data
+    except KeyError:
+        # only keeping rows in Australia
+        df = df[df["raw_countryCode"] == "AU"]
+        # removing the unnecessary columns
+        df = df[
+            [
+                "scientificName",
+                "raw_countryCode",
+                "year",
+                "decimalLatitude",
+                "decimalLongitude",
+            ]
+        ]
+        # renmaing the columns
+        df = df.rename(
+            columns={
+                "scientificName": "species",
+                "raw_countryCode": "countryCode",
+            }
+        )
 
     # renmaing the columns
     df = df.rename(
