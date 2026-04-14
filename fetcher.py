@@ -16,7 +16,7 @@ ALA_URL = os.getenv("ALA_URL")
 
 def main():
     file_name = get_ala_data(WOMBAT_SCIENTIFIC_NAME)
-    
+
     clean_data(file_name)
 
 
@@ -145,7 +145,7 @@ def clean_data(file_name: str):
                 "decimalLongitude",
             ]
         ]
-        # renmaing the columns
+        # renmaing the ala specific columns
         df = df.rename(
             columns={
                 "scientificName": "species",
@@ -153,7 +153,7 @@ def clean_data(file_name: str):
             }
         )
 
-    # renmaing the columns
+    # renmaing the other columns
     df = df.rename(
         columns={
             "decimalLatitude": "latitude",
