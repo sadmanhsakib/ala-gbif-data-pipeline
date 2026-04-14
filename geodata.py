@@ -2,7 +2,7 @@ import time
 import pandas as pd
 import geopandas as gpd
 
-file_name = "macropus_giganteus_sightings_ala.csv"
+file_name = "vombatus_ursinus_sightings_gbif.csv"
 LATITUDE_COLUMN = "latitude"
 LONGITUDE_COLUMN = "longitude"
 
@@ -25,37 +25,31 @@ gdf_projected["buffer_1km"] = gdf_projected.geometry.buffer(1000)
 states = gpd.read_file("SA1_2021_AUST_GDA2020.shp")
 # Filter to just the main states if territories are included
 states = states[states["STE_NAME21"].notna()]
+columns = [
+    "SA1_CODE21",
+    "CHG_FLAG21",
+    "CHG_LBL21",
+    "SA2_CODE21",
+    "SA2_NAME21",
+    "SA3_CODE21",
+    "SA3_NAME21",
+    "SA4_CODE21",
+    "SA4_NAME21",
+    "GCC_CODE21",
+    "GCC_NAME21",
+    "AUS_CODE21",
+    "AUS_NAME21",
+    "AREASQKM21",
+    "LOCI_URI21",
+]
+states = states.drop(columns=columns)
 states_projected = states.to_crs(gdf_projected.crs)
-high_risk = gpd.sjoin(
-    gdf_projected, states_projected, how="inner", predicate="within"
-)
 
-high_risk = high_risk.drop(
-    columns=[
-        "index_right",
-        "SA1_CODE21",
-        "CHG_FLAG21",
-        "CHG_LBL21",
-        "SA2_CODE21",
-        "SA2_NAME21",
-        "SA3_CODE21",
-        "SA3_NAME21",
-        "SA4_CODE21",
-        "SA4_NAME21",
-        "GCC_CODE21",
-        "GCC_NAME21",
-        "AUS_CODE21",
-        "AUS_NAME21",
-        "AREASQKM21",
-        "LOCI_URI21",
-    ]
-)
-
-low_risk = gdf_projected[~gdf_projected.index.isin(high_risk.index)]
+sightings = gpd.sjoin(gdf_projected, states_projected, how="inner", predicate="within")
 
 
 def main():
-    print(gdf_with_states["STE_NAME21"].value_counts())
+    pass
 
 
 if __name__ == "__main__":

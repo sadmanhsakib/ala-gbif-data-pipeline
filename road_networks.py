@@ -11,7 +11,6 @@ def main():
         "Australian Capital Territory, Australia", network_type="drive"
     )
 
-    print(type(G))
     # converting graph to node and edge GeoDataFrames
     # nodes are intersections or endpoints
     # edges are the roads connecting nodes
@@ -24,16 +23,26 @@ def main():
 
 
 def visualize_data(edges_projected, road_buffer_gdf):
+    sightings_act = geodata.sightings[
+        geodata.sightings["STE_NAME21"] == "Australian Capital Territory"
+    ]
+
     fig, ax = plt.subplots(figsize=(12, 10))
 
     edges_projected.plot(ax=ax, color="gray", linewidth=0.5, alpha=0.5)
     road_buffer_gdf.plot(ax=ax, color="blue", alpha=0.2)
-    geodata.low_risk.plot(
-        ax=ax, color="green", markersize=5, alpha=0.7, label="Low risk"
+
+    print(sightings_act.columns.to_list())
+    high_risk = gpd.sjoin(
+        sightings_act.drop(columns="index_right", errors="ignore"),
+        road_buffer_gdf,
+        how="inner",
+        predicate="within",
     )
-    geodata.high_risk.plot(
-        ax=ax, color="red", markersize=8, alpha=0.9, label="High risk"
-    )
+
+    low_risk = sightings_act[~sightings_act.index.isin(high_risk.index)]
+    high_risk.plot(ax=ax, color="red", markersize=8, alpha=0.9, label="High risk")
+    low_risk.plot(ax=ax, color="green", markersize=8, alpha=0.9, label="Low risk")
 
     ax.set_title("Road Network (Driveable)", fontsize=14)
     ax.set_xlabel("Longitude")
