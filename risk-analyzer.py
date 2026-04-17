@@ -4,14 +4,27 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import pandas as pd
 
-file_name = "sightings/vombatus_ursinus_sightings_gbif.csv"
+kangaroo_csv = "sightings/kangaroo_sightings.csv"
+wombat_csv = "sightings/wombat_sightings.csv"
+koala_csv = "sightings/koala_sightings.csv"
+
 LATITUDE_COLUMN = "latitude"
 LONGITUDE_COLUMN = "longitude"
 
-df = pd.read_csv(file_name)
+kangaroo_df = pd.read_csv(kangaroo_csv)
+wombat_df = pd.read_csv(wombat_csv)
+koala_df = pd.read_csv(koala_csv)
 
 
-def prepare_spatial_data():
+def main():
+    sightings, states_projected, edges_projected, road_buffer = prepare_spatial_data(
+        wombat_df
+    )
+
+    visualize_data(sightings, states_projected, edges_projected, road_buffer)
+
+
+def prepare_spatial_data(df: pd.DataFrame) -> tuple[gpd.GeoDataFrame]:
     # converting pandas DataFrame to GeoDataFrame
     gdf = gpd.GeoDataFrame(
         df,
@@ -69,23 +82,24 @@ def prepare_spatial_data():
     road_buffer = edges_projected.buffer(500).union_all()
     road_buffer = gpd.GeoDataFrame(geometry=[road_buffer], crs="EPSG:32754")
 
-    return sightings, edges_projected, road_buffer
+    return sightings, states_projected, edges_projected, road_buffer
 
 
-def main():
-    sightings, edges_projected, road_buffer = prepare_spatial_data()
-    visualize_data(sightings, edges_projected, road_buffer)
-
-
-def visualize_data(sightings, edges_projected, road_buffer):
+def visualize_data(sightings, states_projected, edges_projected, road_buffer):
     # isolating sightings to a specific area
     sightings_act = sightings[sightings["STE_NAME21"] == "Australian Capital Territory"]
 
+    act = states_projected[
+        states_projected["STE_NAME21"] == "Australian Capital Territory"
+    ]
+
     fig, ax = plt.subplots(figsize=(12, 10))
 
+    # plotting the states
+    act.plot(ax=ax, color="green", alpha=0.2)
     # plotting the edges and roads
-    edges_projected.plot(ax=ax, color="gray", linewidth=0.5, alpha=0.5)
-    road_buffer.plot(ax=ax, color="blue", alpha=0.2)
+    edges_projected.plot(ax=ax, color="black", linewidth=0.5, alpha=0.5)
+    road_buffer.plot(ax=ax, color="grey", alpha=0.2)
 
     # finding sightings within 500m of a road
     high_risk = gpd.sjoin(
@@ -99,7 +113,7 @@ def visualize_data(sightings, edges_projected, road_buffer):
 
     # plotting the sightings
     high_risk.plot(ax=ax, color="red", markersize=8, alpha=0.9, label="High risk")
-    low_risk.plot(ax=ax, color="green", markersize=8, alpha=0.9, label="Low risk")
+    low_risk.plot(ax=ax, color="blue", markersize=8, alpha=0.9, label="Low risk")
 
     # labeling the map
     ax.set_title("Road Network (Driveable)", fontsize=14)
