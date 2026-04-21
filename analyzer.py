@@ -2,6 +2,7 @@ import time, gc
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import pandas as pd
+import seaborn as sns
 
 LATITUDE_COLUMN = "latitude"
 LONGITUDE_COLUMN = "longitude"
@@ -27,8 +28,6 @@ def main():
         roads_projected,
         roads_buffer_gdf,
     ) = prepare_spatial_data(sightings_df)
-
-    print(modeling_gdf["risk_label"].value_counts())
 
     visualize_data(
         modeling_gdf,
@@ -131,8 +130,7 @@ def visualize_data(
     roads_projected,
     roads_buffer_gdf,
 ):
-    high_risk_sightings = modeling_gdf[modeling_gdf["risk_label"] == 1]
-    low_risk_sightings = modeling_gdf[modeling_gdf["risk_label"] == 0]
+    sns.set_theme(style="whitegrid", palette="deep")
 
     fig, ax = plt.subplots(figsize=(12, 10))
 
@@ -143,12 +141,25 @@ def visualize_data(
     roads_projected.plot(ax=ax, color="black", linewidth=0.5, alpha=0.5)
     roads_buffer_gdf.plot(ax=ax, color="grey", alpha=0.2)
 
-    # plotting the sightings
-    high_risk_sightings.plot(
-        ax=ax, color="red", markersize=8, alpha=0.9, label="High risk"
+    # plotting the sightings using seaborn for styled scatter points
+    sightings_plot_data = modeling_gdf.copy()
+    sightings_plot_data["x"] = sightings_plot_data.geometry.x
+    sightings_plot_data["y"] = sightings_plot_data.geometry.y
+    sightings_plot_data["Risk"] = sightings_plot_data["risk_label"].map(
+        {1: "High risk", 0: "Low risk"}
     )
-    low_risk_sightings.plot(
-        ax=ax, color="blue", markersize=6, alpha=0.9, label="Low risk"
+
+    sns.scatterplot(
+        data=sightings_plot_data,
+        x="x",
+        y="y",
+        hue="Risk",
+        hue_order=["High risk", "Low risk"],
+        palette={"High risk": "#e74c3c", "Low risk": "#3498db"},
+        size="Risk",
+        sizes={"High risk": 20, "Low risk": 12},
+        alpha=0.9,
+        ax=ax,
     )
 
     # labeling the map
