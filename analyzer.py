@@ -22,16 +22,16 @@ MAIN_STATES = (
 
 def main():
     (
-        high_risk_sightings,
-        low_risk_sightings,
+        modeling_gdf,
         states_projected,
         roads_projected,
         roads_buffer_gdf,
     ) = prepare_spatial_data(sightings_df)
 
+    print(modeling_gdf["risk_label"].value_counts())
+
     visualize_data(
-        high_risk_sightings,
-        low_risk_sightings,
+        modeling_gdf,
         states_projected,
         roads_projected,
         roads_buffer_gdf,
@@ -93,21 +93,32 @@ def prepare_spatial_data(df: pd.DataFrame) -> tuple[gpd.GeoDataFrame]:
     gc.collect()
 
     # adding buffer of 500m around the roads
-    roads_buffer = roads_projected.copy()
-    roads_buffer["geometry"] = roads_buffer.buffer(500)
-    roads_buffer_gdf = roads_buffer[["geometry"]].reset_index(drop=True)
+    roads_buffer_gdf = gpd.GeoDataFrame(
+        geometry=roads_projected.buffer(500), crs="EPSG:32754"
+    ).reset_index(drop=True)
 
     # finding sightings within 500m of a road
     high_risk_sightings = gpd.sjoin(
         sightings, roads_buffer_gdf, how="inner", predicate="within"
     )
 
+    # dropping the duplicate sightings
+    high_risk_sightings = high_risk_sightings[
+        ~high_risk_sightings.index.duplicated(keep="first")
+    ]
+
     # finding sightings not within 500m of a road
     low_risk_sightings = sightings[~sightings.index.isin(high_risk_sightings.index)]
 
+    high_risk_sightings["risk_label"] = 1
+    low_risk_sightings["risk_label"] = 0
+
+    modeling_gdf = pd.concat(
+        [high_risk_sightings, low_risk_sightings], ignore_index=True
+    )
+
     return (
-        high_risk_sightings,
-        low_risk_sightings,
+        modeling_gdf,
         states_projected,
         roads_projected,
         roads_buffer_gdf,
@@ -115,12 +126,14 @@ def prepare_spatial_data(df: pd.DataFrame) -> tuple[gpd.GeoDataFrame]:
 
 
 def visualize_data(
-    high_risk_sightings,
-    low_risk_sightings,
+    modeling_gdf,
     states_projected,
     roads_projected,
     roads_buffer_gdf,
 ):
+    high_risk_sightings = modeling_gdf[modeling_gdf["risk_label"] == 1]
+    low_risk_sightings = modeling_gdf[modeling_gdf["risk_label"] == 0]
+
     fig, ax = plt.subplots(figsize=(12, 10))
 
     # plotting the whole country
