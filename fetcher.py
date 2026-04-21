@@ -210,4 +210,6 @@ def merge_csv(new_file_name: str, file_names: list):
     # removing the old csv files
     for file_name in file_names:
         os.remove(file_name)
+        
+        
 main()

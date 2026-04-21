@@ -1,27 +1,41 @@
-from re import S
-import time
-import osmnx as ox
+import time, gc
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import pandas as pd
 
-
 LATITUDE_COLUMN = "latitude"
 LONGITUDE_COLUMN = "longitude"
 
-sightings_df = pd.read_csv("sightings/sightings.csv")
+sightings_df = pd.read_csv("sightings.csv")
 
-MAIN_STATES = ("New South Wales", "Victoria", "Queensland", 
-               "Western Australia", "South Australia", "Tasmania",
-               "Australian Capital Territory", "Northern Territory")
+MAIN_STATES = (
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "Western Australia",
+    "South Australia",
+    "Tasmania",
+    "Australian Capital Territory",
+    "Northern Territory",
+)
 
 
 def main():
-    high_risk, low_risk, states_projected, edges_projected, road_buffer_gdf = prepare_spatial_data(
-        sightings_df
+    (
+        high_risk_sightings,
+        low_risk_sightings,
+        states_projected,
+        roads_projected,
+        roads_buffer_gdf,
+    ) = prepare_spatial_data(sightings_df)
+
+    visualize_data(
+        high_risk_sightings,
+        low_risk_sightings,
+        states_projected,
+        roads_projected,
+        roads_buffer_gdf,
     )
-    
-    visualize_data(high_risk, low_risk, states_projected, edges_projected, road_buffer_gdf)
 
 
 def prepare_spatial_data(df: pd.DataFrame) -> tuple[gpd.GeoDataFrame]:
@@ -32,108 +46,97 @@ def prepare_spatial_data(df: pd.DataFrame) -> tuple[gpd.GeoDataFrame]:
         geometry=gpd.points_from_xy(df[LONGITUDE_COLUMN], df[LATITUDE_COLUMN]),
         crs="EPSG:4326",
     )
-
-    # converting to projected CRS
     gdf_projected = gdf.to_crs("EPSG:32754")
+    del gdf
+    gc.collect()
 
-    states = gpd.read_file("roads/SA1_2021_AUST_GDA2020.shp")
+    print("Loading the state data....")
+    states = gpd.read_file(
+        "maps/SA1_2021_AUST_GDA2020.shp", columns=["STE_NAME21", "geometry"]
+    )
 
     # Filter to just the main states
     states = states[states["STE_NAME21"].isin(MAIN_STATES)]
-                    
-    columns = [
-        "SA1_CODE21",
-        "CHG_FLAG21",
-        "CHG_LBL21",
-        "SA2_CODE21",
-        "SA2_NAME21",
-        "SA3_CODE21",
-        "SA3_NAME21",
-        "SA4_CODE21",
-        "SA4_NAME21",
-        "GCC_CODE21",
-        "GCC_NAME21",
-        "AUS_CODE21",
-        "AUS_NAME21",
-        "AREASQKM21",
-        "LOCI_URI21",
-        "STE_CODE21",
-    ]
-    # removing unnecessary columns
-    states = states.drop(columns=columns)
-    states_projected = states.to_crs(gdf_projected.crs)
-    
+    states_projected = states.to_crs("EPSG:32754")
+    del states
+    gc.collect()
+
     # finding sightings within states
     sightings = gpd.sjoin(
         gdf_projected, states_projected, how="inner", predicate="within"
     )
-    
     # dropping unnecessary columns
     sightings = sightings.drop(columns=["index_right", "countryCode"])
     sightings = sightings.rename(columns={"STE_NAME21": "state"})
+    del gdf_projected
+    gc.collect()
 
-    high_risk_parts = []
-    edges_projected_parts = []
-    road_buffer_gdf_parts = []
+    print("loading the roads data....")
+    # loading the roads data
+    roads = gpd.read_file("maps/australia.gpkg", layer="gis_osm_roads_free")
+    # keeping the main roads
+    roads = roads[["osm_id", "fclass", "name", "geometry"]]
 
-    # looping through each state for better data handling
-    for STATE in MAIN_STATES:
-        # isolating the sightings
-        state_sightings = sightings[sightings["state"] == STATE]
-        state_sightings_projected = state_sightings.to_crs("EPSG:32754")
-        
-        # pulling driveable roads for the current state
-        G = ox.graph_from_place(
-            f"{STATE}, Australia", network_type="drive"
-        )
+    # filtering roads
+    relevant_roads = [
+        "motorway",
+        "trunk",
+        "primary",
+        "secondary",
+        "tertiary",
+        "unclassified",
+        "residential",
+    ]
+    roads = roads[roads["fclass"].isin(relevant_roads)]
+    roads_projected = roads.to_crs("EPSG:32754")
+    del roads
+    gc.collect()
 
-        # converting graph to node and edge GeoDataFrames
-        # nodes are intersections or endpoints
-        # edges are the roads connecting nodes
-        state_nodes, state_edges = ox.graph_to_gdfs(G)
+    # adding buffer of 500m around the roads
+    roads_buffer = roads_projected.copy()
+    roads_buffer["geometry"] = roads_buffer.buffer(500)
+    roads_buffer_gdf = roads_buffer[["geometry"]].reset_index(drop=True)
 
-        # converting to projected CRS
-        state_edges_projected = state_edges.to_crs("EPSG:32754")
-        # creating a buffer of 500m around the roads
-        state_road_buffer = state_edges_projected.buffer(500).union_all()
-        state_road_buffer_gdf = gpd.GeoDataFrame(geometry=[state_road_buffer], crs="EPSG:32754")
-
-        # finding sightings within 500m of a road
-        high_risk_state = gpd.sjoin(
-            state_sightings_projected,
-            state_road_buffer_gdf,
-            how="inner",
-            predicate="within",
-        )
-        # storing the data for combining
-        high_risk_parts.append(high_risk_state)
-        edges_projected_parts.append(state_edges_projected)
-        road_buffer_gdf_parts.append(state_road_buffer_gdf)        
-        
-    # merging the parts for full gdf
-    high_risk = pd.concat(high_risk_parts, ignore_index=True)
-    edges_projected = pd.concat(edges_projected_parts, ignore_index=True)
-    road_buffer_gdf = pd.concat(road_buffer_gdf_parts, ignore_index=True)
+    # finding sightings within 500m of a road
+    high_risk_sightings = gpd.sjoin(
+        sightings, roads_buffer_gdf, how="inner", predicate="within"
+    )
 
     # finding sightings not within 500m of a road
-    low_risk = sightings[~sightings.index.isin(high_risk.index)]
-    
-    return high_risk, low_risk, states_projected, edges_projected, road_buffer_gdf
+    low_risk_sightings = sightings[~sightings.index.isin(high_risk_sightings.index)]
+
+    return (
+        high_risk_sightings,
+        low_risk_sightings,
+        states_projected,
+        roads_projected,
+        roads_buffer_gdf,
+    )
 
 
-def visualize_data(high_risk, low_risk, states_projected, edges_projected, road_buffer_gdf):
+def visualize_data(
+    high_risk_sightings,
+    low_risk_sightings,
+    states_projected,
+    roads_projected,
+    roads_buffer_gdf,
+):
     fig, ax = plt.subplots(figsize=(12, 10))
 
     # plotting the whole country
     states_projected.plot(ax=ax, color="green", alpha=0.2)
-    
+
     # plotting the edges and roads
-    edges_projected.plot(ax=ax, color="black", linewidth=0.5, alpha=0.5)
-    road_buffer_gdf.plot(ax=ax, color="grey", alpha=0.2)
+    roads_projected.plot(ax=ax, color="black", linewidth=0.5, alpha=0.5)
+    roads_buffer_gdf.plot(ax=ax, color="grey", alpha=0.2)
 
     # plotting the sightings
-    high_risk.plot(ax=ax, color="red", markersize=8, alpha=0.9, label="High risk")
-    low_risk.plot(ax=ax, color="blue", markersize=6, alpha=0.9, label="Low risk")
+    high_risk_sightings.plot(
+        ax=ax, color="red", markersize=8, alpha=0.9, label="High risk"
+    )
+    low_risk_sightings.plot(
+        ax=ax, color="blue", markersize=6, alpha=0.9, label="Low risk"
+    )
 
     # labeling the map
     ax.set_title("Sightings across Australia", fontsize=14)
