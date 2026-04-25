@@ -17,6 +17,10 @@ ALA_URL = os.getenv("ALA_URL")
 
 
 def main():
+    get_ala_data(KANGAROO_SCIENTIFIC_NAME)
+    get_ala_data(WOMBAT_SCIENTIFIC_NAME)
+    get_ala_data(KOALA_SCIENTIFIC_NAME)
+    return 0
     merge_csv(
         "sightings/sightings.csv",
         [
@@ -27,7 +31,7 @@ def main():
     )
 
 
-def get_gbif_data(species_key: int) -> json:
+def get_gbif_data(species_key: int) -> str:
     offset = 0
     results = []
 
@@ -75,7 +79,7 @@ def get_gbif_data(species_key: int) -> json:
         return None
 
 
-def get_ala_data(species_scientific_name: str) -> json:
+def get_ala_data(species_scientific_name: str) -> str:
     offset = 0
     results = []
 

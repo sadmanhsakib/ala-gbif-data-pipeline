@@ -31,7 +31,7 @@ def main():
 
     print("Starting Visualization.....")
 
-    visualize_data(
+    visualize(
         modeling_gdf,
         states_projected,
         roads_projected,
@@ -159,7 +159,7 @@ def prepare_spatial_data(df: pd.DataFrame) -> tuple[gpd.GeoDataFrame]:
     )
 
 
-def visualize_data(
+def visualize(
     modeling_gdf: gpd.GeoDataFrame,
     states_projected: gpd.GeoDataFrame,
     roads_projected: gpd.GeoDataFrame,
