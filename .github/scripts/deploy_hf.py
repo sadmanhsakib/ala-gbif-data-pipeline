@@ -38,6 +38,7 @@ for folder, repo_path in [
     ("app", "app"),
     ("data/model", "data/model"),
     ("data/processed", "data/processed"),
+    (".streamlit", ".streamlit"),
 ]:
     api.upload_folder(
         folder_path=folder,
