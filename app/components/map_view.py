@@ -270,7 +270,7 @@ def _build_national_map(show_state: bool, show_heatmap: bool,
     # Add high-risk segments layer
     if show_highrisk:
         colormap = cm.LinearColormap(
-            colors=["#ffffb2", "#fecc5c", "#fd8d3c", "#e31a1c"],
+            colors=["#ffffb2", "#fecc5c", "#fd8d3c", "#e31a1c", "#b10026"],
             vmin=HIGHRISK_THRESHOLD,
             vmax=1.0,
             caption="Predicted Risk Score",
@@ -308,7 +308,30 @@ def _build_national_map(show_state: bool, show_heatmap: bool,
                 ),
             ),
         ).add_to(m)
-        colormap.add_to(m)
+        # Manually construct colormap HTML with exact 5 tick marks
+        colormap_html = f"""
+        <div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); width: 300px;">
+            <div style="font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #1d1d1f;">Predicted Risk Score</div>
+            <div style="display: flex; align-items: center; gap: 2px;">
+                <div style="flex: 1; height: 20px; background: linear-gradient(to right, #ffffb2 0%, #fecc5c 25%, #fd8d3c 50%, #e31a1c 75%, #b10026 100%); border-radius: 3px;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 11px; color: #6e6e73;">
+                <span>0.980</span>
+                <span>0.985</span>
+                <span>0.990</span>
+                <span>0.995</span>
+                <span>1.000</span>
+            </div>
+        </div>
+        """
+
+        # Create custom div for colormap at bottom left
+        custom_colormap = folium.Element(f"""
+        <div style="position: absolute; bottom: 20px; left: 20px; z-index: 1000;">
+            {colormap_html}
+        </div>
+        """)
+        m.get_root().html.add_child(custom_colormap)
 
     # Add sign placements layer
     if show_signs:
@@ -335,7 +358,7 @@ def _build_national_map(show_state: bool, show_heatmap: bool,
     </div>
     """
     m.get_root().html.add_child(folium.Element(title_html))
-    
+
     # Add fullscreen control
     folium.plugins.Fullscreen(position="bottomright").add_to(m)
 
