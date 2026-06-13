@@ -3,7 +3,7 @@ name = "aus-wildlife-roadkill-risk-mapper"
 version = "0.1.0"
 description = "A national-scale geospatial machine learning platform that scores every road segment in Australia for wildlife-vehicle collision risk — and recommends precisely where to place warning signs."
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "branca>=0.8.2",
     "esda>=2.9.0",

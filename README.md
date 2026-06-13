@@ -12,7 +12,6 @@
 [![Open Data](https://img.shields.io/badge/Data-100%25%20Open-brightgreen?style=flat-square)](https://www.ala.org.au/)
 [![Live App](https://img.shields.io/badge/-HuggingFace-3B4252?style=flat&logo=huggingface&logoColor=)](https://sadmanhsakib-aus-wildlife-roadkill-risk-mapper.hf.space/)
 
-
 </div>
 
 ---
@@ -41,24 +40,27 @@ Built entirely on 100% open data and open-source tools, it can be reproduced, au
 ## 📸 Application Screenshots
 
 ### Full Application View
+
 ![Full application view showing the interactive risk map with state boundaries and sign placement markers](docs/screenshots/hero-full-view.png)
 *The complete dashboard: national risk map with layer controls on the left and the SHAP attribution panel on the right.*
 
 ### Interactive Map Layers
 
 | State Boundaries & Tooltips | Wildlife Occurrence Heatmap |
-|---|---|
+| --- | --- |
 | ![State boundary hover tooltip showing segment statistics](docs/screenshots/map-state-tooltip.png) | ![Wildlife occurrence heatmap across Australia](docs/screenshots/map-heatmap.png) |
 
 | High-Risk Road Segments | Sign Placement Markers |
-|---|---|
+| --- | --- |
 | ![High-risk road segments coloured by predicted risk score](docs/screenshots/map-highrisk-segments.png) | ![Red sign placement markers on the map](docs/screenshots/map-sign-placements.png) |
 
 ### SHAP Feature Attribution Panel
+
 ![SHAP waterfall plot showing feature contributions for a selected high-risk road segment](docs/screenshots/shap-waterfall-panel.png)
 *Click any sign marker to see exactly which features drove that segment's risk score — sighting density, NDVI, proximity, speed limit, and more.*
 
 ### National Statistics Dashboard
+
 ![Five metric cards showing 99,739 road segments, 413,000+ sightings, 1,189 critical segments, 11 species, 8 states](docs/screenshots/metrics-cards.png)
 
 ---
@@ -68,7 +70,7 @@ Built entirely on 100% open data and open-source tools, it can be reproduced, au
 The following 11 native Australian species are tracked — chosen based on ecological significance, collision severity, road proximity, and nocturnal movement patterns:
 
 | Common Name | Scientific Name | Body Mass | Nocturnal Risk |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Red Kangaroo | *Osphranter rufus* | ~85 kg | High |
 | Eastern Grey Kangaroo | *Macropus giganteus* | ~66 kg | High |
 | Swamp Wallaby | *Wallabia bicolor* | ~20 kg | Very High |
@@ -258,7 +260,7 @@ This reduces peak memory from ~12GB → ~200MB, making the pipeline runnable on 
 The final feature store (`sightings.parquet`) contains 413,000 rows across 11 species and 17 engineered columns:
 
 | Column | Type | Description | Engineering Detail |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `species` | `str` | Scientific name | Direct from ALA/GBIF |
 | `month` | `int` | Month of sighting (1–12) | Direct from API |
 | `year` | `int` | Year of sighting | Filtered to 2020–2026 |
@@ -311,7 +313,7 @@ Every tool was chosen deliberately. Here's the reasoning:
 ### Data Layer
 
 | Tool | Why This Tool |
-|---|---|
+| --- | --- |
 | **Pandas + PyArrow** | Columnar Parquet format is 5–10× faster than CSV for large sequential reads; critical at 413k rows with repeated ML iterations |
 | **HTTPX (async)** | Enables concurrent GBIF requests across species/state combinations without rate-limit blocking; standard `requests` is synchronous and would be 8× slower for the same data volume |
 | **Requests** | Used for ALA, which requires simpler synchronous pagination; ALA's rate limits don't benefit from async |
@@ -383,6 +385,7 @@ All five data sources are **100% free and openly licensed**. The entire pipeline
 | **10** | METHODOLOGY.md + documentation | Data provenance · label rationale · Moran's I result · limitations | ✅ Complete |
 
 **Pipeline output:**
+
 - `sightings.parquet` — 413,000 sighting rows · 11 species · 17 features · ~18MB
 - `data/processed/road_segments.parquet` — Proxy risk score per road segment · ~53MB
 - `data/model/model.pkl` — Trained XGBoost model (Optuna-optimised) · ~13MB
@@ -465,7 +468,7 @@ pip install -r requirements.txt
 Place the following in `data/raw/` before running the pipeline:
 
 | File | Source | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `road_network.gpkg` | [GeoFabrik OSM](https://download.geofabrik.de/australia-oceania/australia.html) | Australia road network (~600MB) |
 | `SA1_2021_AUST_GDA2020.shp` (+ sidecar files) | [ABS ASGS](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files) | State boundary shapefiles |
 | Monthly NDVI `.tif` files | [NASA AppEEARS](https://appeears.earthdatacloud.nasa.gov/) · MODIS MOD13A3 v061 | Place in `data/raw/vegetation/` |
@@ -496,6 +499,7 @@ After all scripts complete, the full model artefacts will be written to `data/` 
 The Streamlit application provides an interactive web interface for exploring the risk model outputs:
 
 **Key Features:**
+
 - **Interactive Map Layers**: Toggle between state boundaries, wildlife occurrence heatmap, high-risk road segments, and sign placement markers
 - **Click-to-Inspect**: Click any red sign marker to view detailed SHAP waterfall analysis explaining that segment's risk score
 - **National Statistics Dashboard**: View aggregate metrics across all 99,739 analyzed road segments
@@ -560,6 +564,7 @@ GBIF requests use **async HTTPX** for concurrent fetching across species-state c
 ### CRS Strategy
 
 All spatial operations are performed in **EPSG:32754** (WGS 84 / UTM Zone 54S), a projected coordinate reference system that uses metres as its unit. This matters for:
+
 1. **`distance_to_road`** — accurate metre values, not degree-approximated distances
 2. **Spatial block sizes** — 50km × 50km grid cells are exact in metres
 3. **Sign deduplication buffer** — 2km is a precise metre distance
@@ -636,6 +641,7 @@ This transforms the tool from a black-box recommender into an **evidence-based, 
 MIT — see [LICENSE](LICENSE).
 
 This project uses data from:
+
 - [Atlas of Living Australia](https://www.ala.org.au/) — CC BY 3.0
 - [GBIF](https://www.gbif.org/) — CC BY 4.0
 - [GeoFabrik / OpenStreetMap](https://www.geofabrik.de/) — ODbL
