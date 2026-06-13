@@ -1,9 +1,16 @@
+# Streamlit-level theme — sets the base palette/fonts so the app renders in the
+# right colours immediately on cold start, before style.css finishes loading.
 [theme]
-primaryColor = "#007aff"
-backgroundColor = "#fafafa"
-secondaryBackgroundColor = "#ffffff"
-textColor = "#1d1d1f"
+base = "light"
+primaryColor = "#243B2E"          # eucalyptus brand green
+backgroundColor = "#F6F4EE"       # warm paper canvas
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#221F1A"             # warm charcoal
 font = "sans serif"
 
 [server]
-maxUploadSize = 200
+fileWatcherType = "none"
+enableStaticServing = true
+
+[browser]
+gatherUsageStats = false
