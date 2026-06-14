@@ -12,15 +12,13 @@ pinned: true
 ---
 """
 
-requirements = """streamlit
-streamlit-folium
-pandas
-matplotlib
+requirements = """geopandas
 joblib
+matplotlib
+pandas
+pydeck
 shap
-geopandas
-branca
-folium
+streamlit
 """
 
 with open("HF_README.md", "w") as f:
