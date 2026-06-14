@@ -98,7 +98,7 @@ def inject_css() -> None:
 
 # ── Reusable HTML fragments ───────────────────────────────────────────────────
 def brand_mark() -> None:
-    """Render the sidebar brand lockup (called once, at top of the nav)."""
+    """Render the sidebar brand lockup."""
     st.sidebar.html(
         """
         <div class="rw-brand">

@@ -45,7 +45,7 @@ def render() -> None:
     st.caption(
         f"Showing the **{len(df):,}** highest-risk segments at or above risk "
         f"**{min_risk:.3f}** (capped at {data.EXPLORER_MAX_SEGMENTS:,} for "
-        f"free-tier performance)."
+        f"performance)."
     )
 
     theme.section_header("Risk map", "Lines are coloured by risk — deeper red is "

@@ -134,5 +134,5 @@ def render_shap_panel(segment_id: int | None = None) -> None:
         </div>
         """
     )
-    st.caption("Bars in orange push this segment's risk **up**; green bars pull it **down**.")
+    st.caption("Bars in red push this segment's risk **up**; blue bars pull it **down**.")
     st.image(generate_waterfall_plot(segment_id), width='stretch')

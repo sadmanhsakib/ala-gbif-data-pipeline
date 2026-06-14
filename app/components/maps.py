@@ -141,10 +141,10 @@ def national_overview_deck() -> pdk.Deck:
     )
     tooltip = {
         "html": (
-            "<b>{properties.state}</b>"
-            "<br/>Critical segments: <b>{properties.critical_segments}</b>"
-            "<br/>Total segments: {properties.total_segments}"
-            "<br/>Mean risk {properties.mean_risk_fmt} · Peak {properties.max_risk_fmt}"
+            "<b>{state}</b>"
+            "<br/>Critical segments: <b>{critical_segments}</b>"
+            "<br/>Total segments: {total_segments}"
+            "<br/>Mean risk {mean_risk_fmt} · Peak {max_risk_fmt}"
         ),
         "style": TOOLTIP_STYLE,
     }
@@ -177,9 +177,9 @@ def explorer_deck(geojson: dict, show_signs: bool = False) -> pdk.Deck:
         layers.append(_signs_layer(signs_for_map(), pickable=False))
     tooltip = {
         "html": (
-            "<b>Segment {properties.road_segment_id}</b>"
-            "<br/>Risk <b>{properties.risk_fmt}</b>"
-            "<br/>{properties.state} · {properties.road_class}"
+            "<b>Segment {road_segment_id}</b>"
+            "<br/>Risk <b>{risk_fmt}</b>"
+            "<br/>{state} · {road_class}"
         ),
         "style": TOOLTIP_STYLE,
     }
