@@ -18,8 +18,7 @@ matplotlib
 pandas
 pydeck
 shap
-streamlit
-"""
+streamlit"""
 
 with open("HF_README.md", "w") as f:
     f.write(hf_readme)

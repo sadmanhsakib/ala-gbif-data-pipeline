@@ -22,8 +22,8 @@
 
 ## 🌿 Why This Project Exists
 
-> *"More than 10 million animals die on Australian roads every year."*
-> — [University of Melbourne Research](https://findanexpert.unimelb.edu.au/news/79342-10-million-animals-die-on-our-roads-each-year.-here%E2%80%99s-what-works-(and-what-doesn%E2%80%99t)-to-cut-the-toll)
+> _"More than 10 million animals die on Australian roads every year."_
+> — [University of Melbourne Research](<https://findanexpert.unimelb.edu.au/news/79342-10-million-animals-die-on-our-roads-each-year.-here%E2%80%99s-what-works-(and-what-doesn%E2%80%99t)-to-cut-the-toll>)
 
 Australia is home to some of the planet's most extraordinary and irreplaceable wildlife. Kangaroos, koalas, wombats, echidnas, and platypuses — many of these wildlife are an endemic to Australia, but are found nowhere else on Earth. Unfortunately, they are being killed in devastating numbers by vehicle collisions every single day, putting both wild life and human lives at risk. Yet the warning signs meant to alert drivers are placed using decades-old, static processes that ignore real ecological data entirely.
 
@@ -37,31 +37,53 @@ Built entirely on 100% open data and open-source tools, it can be reproduced, au
 
 ---
 
-## 📸 Application Screenshots
+## 📸 Application Interface & Core Views
 
-### Full Application View
+The interactive Streamlit application provides a multipage workspace for exploring model outputs, auditing segment risk factors, and reviewing signage proposals. The visual system uses the "Bushland & Hazard" design theme (warm eucalyptus green and Aussie-soil tones) structured into five distinct functional views.
 
-![Full application view showing the interactive risk map with state boundaries and sign placement markers](docs/screenshots/hero-full-view.png)
-*The complete dashboard: national risk map with layer controls on the left and the SHAP attribution panel on the right.*
+### 1. National Overview
 
-### Interactive Map Layers
+Renders the high-level landing page, summarizing national network stats, state-by-state risk distributions, and a prioritized list of hotspots.
 
-| State Boundaries & Tooltips | Wildlife Occurrence Heatmap |
-| --- | --- |
-| ![State boundary hover tooltip showing segment statistics](docs/screenshots/map-state-tooltip.png) | ![Wildlife occurrence heatmap across Australia](docs/screenshots/map-heatmap.png) |
+![National Overview interface showing KPI cards, state risk choropleth map, and top hotspot table](docs/screenshots/1-national-overview.png)
+_National dashboard with WebGL state-level choropleth showing where critical road segments are concentrated._
 
-| High-Risk Road Segments | Sign Placement Markers |
-| --- | --- |
-| ![High-risk road segments coloured by predicted risk score](docs/screenshots/map-highrisk-segments.png) | ![Red sign placement markers on the map](docs/screenshots/map-sign-placements.png) |
+---
 
-### SHAP Feature Attribution Panel
+### 2. Risk Explorer
 
-![SHAP waterfall plot showing feature contributions for a selected high-risk road segment](docs/screenshots/shap-waterfall-panel.png)
-*Click any sign marker to see exactly which features drove that segment's risk score — sighting density, NDVI, proximity, speed limit, and more.*
+Provides dynamic filtering (by state, road class, and risk threshold) to subset the national network. Features a high-performance WebGL segment map and interactive ranked list with download options.
 
-### National Statistics Dashboard
+![Risk Explorer showing filters and high-risk segment path overlay on map](docs/screenshots/2-risk-explorer.png)
 
-![Five metric cards showing 99,739 road segments, 413,000+ sightings, 1,189 critical segments, 11 species, 8 states](docs/screenshots/metrics-cards.png)
+_WebGL-rendered road segment paths colored by risk tier, paired with a sortable, row-selectable priority table that routes straight to detailed analysis._
+
+### 3. Segment Detail
+
+The diagnostic deep dive. For any individual segment, it details the specific features driving the risk prediction and visualizes its localized geometry.
+
+#### 🎛️ SHAP Risk Attribution Waterfall
+
+![SHAP waterfall chart with custom green and orange color ramp for feature contributions](docs/screenshots/3-detail-shap.png)
+_Detailed inspection view featuring metric bands, warning sign status checks, a high-zoom segment locator map, and a color-coded SHAP waterfall plot showing positive (red) and negative (blue) feature attributions._
+
+---
+
+### 4. Sign Placements
+
+The actionable planning tool. Maps the 1,189 recommended warning sign sites, shows state-by-state resource allocation, and allows downloading the coordinates as GIS-ready GeoJSON or CSV data.
+
+![Sign Placements page showing recommended sign markers across Australia and state breakdown](docs/screenshots/4-sign-placements.png)
+_Sign placement overview with recommended sign coordinates on the national map, filtered by state._
+
+---
+
+### 5. Methodology & Data
+
+In-app documentation displaying system parameters, validation metrics (R², MAE, Moran's I), and design limitations to establish transparency.
+
+![Methodology & Data page showing system equations, validation summaries, and limitations](docs/screenshots/5-methodology-view.png)
+_Comprehensive documentation integrated directly into the web application chrome to support non-technical reviewer audits._
 
 ---
 
@@ -69,19 +91,19 @@ Built entirely on 100% open data and open-source tools, it can be reproduced, au
 
 The following 11 native Australian species are tracked — chosen based on ecological significance, collision severity, road proximity, and nocturnal movement patterns:
 
-| Common Name | Scientific Name | Body Mass | Nocturnal Risk |
-| --- | --- | --- | --- |
-| Red Kangaroo | *Osphranter rufus* | ~85 kg | High |
-| Eastern Grey Kangaroo | *Macropus giganteus* | ~66 kg | High |
-| Swamp Wallaby | *Wallabia bicolor* | ~20 kg | Very High |
-| Red-necked Wallaby | *Notamacropus rufogriseus* | ~17 kg | Very High |
-| Common Wombat | *Vombatus ursinus* | ~35 kg | Very High |
-| Koala | *Phascolarctos cinereus* | ~12 kg | High |
-| Common Brushtail Possum | *Trichosurus vulpecula* | ~4 kg | Very High |
-| Common Ringtail Possum | *Pseudocheirus peregrinus* | ~1 kg | Very High |
-| Southern Brown Bandicoot | *Isoodon obesulus* | ~1.5 kg | High |
-| Short-beaked Echidna | *Tachyglossus aculeatus* | ~6 kg | Low |
-| Platypus | *Ornithorhynchus anatinus* | ~2 kg | Moderate |
+| Common Name              | Scientific Name            | Body Mass | Nocturnal Risk |
+| ------------------------ | -------------------------- | --------- | -------------- |
+| Red Kangaroo             | _Osphranter rufus_         | ~85 kg    | High           |
+| Eastern Grey Kangaroo    | _Macropus giganteus_       | ~66 kg    | High           |
+| Swamp Wallaby            | _Wallabia bicolor_         | ~20 kg    | Very High      |
+| Red-necked Wallaby       | _Notamacropus rufogriseus_ | ~17 kg    | Very High      |
+| Common Wombat            | _Vombatus ursinus_         | ~35 kg    | Very High      |
+| Koala                    | _Phascolarctos cinereus_   | ~12 kg    | High           |
+| Common Brushtail Possum  | _Trichosurus vulpecula_    | ~4 kg     | Very High      |
+| Common Ringtail Possum   | _Pseudocheirus peregrinus_ | ~1 kg     | Very High      |
+| Southern Brown Bandicoot | _Isoodon obesulus_         | ~1.5 kg   | High           |
+| Short-beaked Echidna     | _Tachyglossus aculeatus_   | ~6 kg     | Low            |
+| Platypus                 | _Ornithorhynchus anatinus_ | ~2 kg     | Moderate       |
 
 Each species carries three calibrated biological weights that feed directly into the model:
 
@@ -259,25 +281,25 @@ This reduces peak memory from ~12GB → ~200MB, making the pipeline runnable on 
 
 The final feature store (`sightings.parquet`) contains 413,000 rows across 11 species and 17 engineered columns:
 
-| Column | Type | Description | Engineering Detail |
-| --- | --- | --- | --- |
-| `species` | `str` | Scientific name | Direct from ALA/GBIF |
-| `month` | `int` | Month of sighting (1–12) | Direct from API |
-| `year` | `int` | Year of sighting | Filtered to 2020–2026 |
-| `latitude` | `float` | WGS84 latitude | Validated: −10° to −44° |
-| `longitude` | `float` | WGS84 longitude | Validated: 113° to 154° |
-| `season` | `str` | Australian meteorological season | Mapped: Dec–Feb=Summer, etc. |
-| `body_mass_weight` | `float` | Collision severity proxy by mass | Hand-calibrated per species (0.25–1.00) |
-| `nocturnal_weight` | `float` | Nocturnal activity risk multiplier | Hand-calibrated per species (0.30–0.95) |
-| `peak_season_weight` | `float` | Breeding/dispersal period multiplier | 1.3 if peak month else 1.0 |
-| `geometry` | `geometry` | Coordinates of the occurrence | From Latitude and Longitude |
-| `state` | `str` | Australian state/territory code | Spatial join to ABS boundaries |
-| `road_segment_id` | `str` | Nearest OSM road segment ID | Nearest-neighbour spatial join |
-| `road_class` | `str` | Road type hierarchy | Motorway → Track |
-| `speed_limit` | `int` | Speed zone in km/h | Imputed from road class lookup |
-| `traffic_proxy` | `float` | Relative traffic volume (0.2–1.0) | Imputed from road class lookup |
-| `distance_to_road` | `float` | Distance to nearest road (metres) | Calculated in EPSG:32754 |
-| `ndvi` | `float` | Median NDVI at sighting location | Sampled from MODIS composite raster |
+| Column               | Type       | Description                          | Engineering Detail                      |
+| -------------------- | ---------- | ------------------------------------ | --------------------------------------- |
+| `species`            | `str`      | Scientific name                      | Direct from ALA/GBIF                    |
+| `month`              | `int`      | Month of sighting (1–12)             | Direct from API                         |
+| `year`               | `int`      | Year of sighting                     | Filtered to 2020–2026                   |
+| `latitude`           | `float`    | WGS84 latitude                       | Validated: −10° to −44°                 |
+| `longitude`          | `float`    | WGS84 longitude                      | Validated: 113° to 154°                 |
+| `season`             | `str`      | Australian meteorological season     | Mapped: Dec–Feb=Summer, etc.            |
+| `body_mass_weight`   | `float`    | Collision severity proxy by mass     | Hand-calibrated per species (0.25–1.00) |
+| `nocturnal_weight`   | `float`    | Nocturnal activity risk multiplier   | Hand-calibrated per species (0.30–0.95) |
+| `peak_season_weight` | `float`    | Breeding/dispersal period multiplier | 1.3 if peak month else 1.0              |
+| `geometry`           | `geometry` | Coordinates of the occurrence        | From Latitude and Longitude             |
+| `state`              | `str`      | Australian state/territory code      | Spatial join to ABS boundaries          |
+| `road_segment_id`    | `str`      | Nearest OSM road segment ID          | Nearest-neighbour spatial join          |
+| `road_class`         | `str`      | Road type hierarchy                  | Motorway → Track                        |
+| `speed_limit`        | `int`      | Speed zone in km/h                   | Imputed from road class lookup          |
+| `traffic_proxy`      | `float`    | Relative traffic volume (0.2–1.0)    | Imputed from road class lookup          |
+| `distance_to_road`   | `float`    | Distance to nearest road (metres)    | Calculated in EPSG:32754                |
+| `ndvi`               | `float`    | Median NDVI at sighting location     | Sampled from MODIS composite raster     |
 
 ---
 
@@ -312,58 +334,58 @@ Every tool was chosen deliberately. Here's the reasoning:
 
 ### Data Layer
 
-| Tool | Why This Tool |
-| --- | --- |
-| **Pandas + PyArrow** | Columnar Parquet format is 5–10× faster than CSV for large sequential reads; critical at 413k rows with repeated ML iterations |
-| **HTTPX (async)** | Enables concurrent GBIF requests across species/state combinations without rate-limit blocking; standard `requests` is synchronous and would be 8× slower for the same data volume |
-| **Requests** | Used for ALA, which requires simpler synchronous pagination; ALA's rate limits don't benefit from async |
+| Tool                 | Why This Tool                                                                                                                                                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Pandas + PyArrow** | Columnar Parquet format is 5–10× faster than CSV for large sequential reads; critical at 413k rows with repeated ML iterations                                                     |
+| **HTTPX (async)**    | Enables concurrent GBIF requests across species/state combinations without rate-limit blocking; standard `requests` is synchronous and would be 8× slower for the same data volume |
+| **Requests**         | Used for ALA, which requires simpler synchronous pagination; ALA's rate limits don't benefit from async                                                                            |
 
 ### Spatial Layer
 
-| Tool | Why This Tool |
-|---|---|
-| **GeoPandas** | Native integration between Pandas DataFrames and spatial geometries; `sjoin_nearest` computes distance-to-road for 413k points in minutes |
-| **Shapely** | Powers GeoPandas geometry engine; zero configuration overhead |
-| **Rasterio** | Industry standard for GeoTIFF access; `sample_gen` efficiently samples NDVI at arbitrary lat/lon coordinates without loading the entire raster |
-| **PyProj** | Handles CRS transformations; EPSG:32754 (UTM Zone 54S) gives metre-accurate distance calculations over eastern Australia |
-| **EPSG:32754** | Projected CRS covering eastern Australia in metres — required for accurate `distance_to_road` values and spatial block size in the CV step |
+| Tool           | Why This Tool                                                                                                                                  |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **GeoPandas**  | Native integration between Pandas DataFrames and spatial geometries; `sjoin_nearest` computes distance-to-road for 413k points in minutes      |
+| **Shapely**    | Powers GeoPandas geometry engine; zero configuration overhead                                                                                  |
+| **Rasterio**   | Industry standard for GeoTIFF access; `sample_gen` efficiently samples NDVI at arbitrary lat/lon coordinates without loading the entire raster |
+| **PyProj**     | Handles CRS transformations; EPSG:32754 (UTM Zone 54S) gives metre-accurate distance calculations over eastern Australia                       |
+| **EPSG:32754** | Projected CRS covering eastern Australia in metres — required for accurate `distance_to_road` values and spatial block size in the CV step     |
 
 ### Spatial Statistics
 
-| Tool | Why This Tool |
-|---|---|
+| Tool                 | Why This Tool                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **PySAL (libpysal)** | Only Python library with production-grade spatial weights matrices (`KNN`, `Queen`) and spatial lag computation. No alternative exists at this level of correctness |
-| **PySAL (esda)** | `esda.Moran` provides the Moran's I residual test with permutation-based significance — the industry-standard spatial autocorrelation diagnostic |
+| **PySAL (esda)**     | `esda.Moran` provides the Moran's I residual test with permutation-based significance — the industry-standard spatial autocorrelation diagnostic                    |
 
 ### Machine Learning
 
-| Tool | Why This Tool |
-|---|---|
-| **XGBoost** | Best-in-class performance on tabular data with mixed feature types (continuous ecological + ordinal road class). Handles missing values natively. sklearn-compatible API |
-| **scikit-learn** | `GroupKFold` is the exact primitive needed for spatial block CV; also provides train/test evaluation utilities |
-| **SHAP** | `TreeExplainer` computes exact Shapley values for XGBoost (not kernel approximations), making every per-segment explanation mathematically rigorous |
-| **joblib** | Standard XGBoost/sklearn serialisation; smallest file footprint for Streamlit Community Cloud's 1GB memory limit |
+| Tool             | Why This Tool                                                                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **XGBoost**      | Best-in-class performance on tabular data with mixed feature types (continuous ecological + ordinal road class). Handles missing values natively. sklearn-compatible API |
+| **scikit-learn** | `GroupKFold` is the exact primitive needed for spatial block CV; also provides train/test evaluation utilities                                                           |
+| **SHAP**         | `TreeExplainer` computes exact Shapley values for XGBoost (not kernel approximations), making every per-segment explanation mathematically rigorous                      |
+| **joblib**       | Standard XGBoost/sklearn serialisation; smallest file footprint for Streamlit Community Cloud's 1GB memory limit                                                         |
 
 > **Optuna hyperparameter optimisation is integrated.** `model.py` includes a 50-trial Bayesian search (TPE sampler, multi-seed spatial CV objective) that produced the current production parameters: `n_estimators=900`, `learning_rate≈0.024`, `max_depth=8`. See [METHODOLOGY.md §6.7](METHODOLOGY.md#67-optuna-hyperparameter-optimisation) for the full search space and convergence analysis.
 
 ### Application Layer
 
-| Tool | Why This Tool |
-|---|---|
-| **Streamlit** | Single Python file with no frontend code required. Auto-deploys from GitHub. Free HTTPS hosting on Community Cloud. The fastest path from model to stakeholder-facing interface |
-| **Folium** | GeoPandas-native map rendering — `HeatMap`, `GeoJson`, and `CircleMarker` layers compose directly from DataFrames. Interactive tooltips enable per-segment inspection |
-| **streamlit-folium** | Bidirectional bridge between Streamlit and Folium — captures map click events and passes segment IDs back to Python for SHAP panel updates |
-| **Branca** | Folium's colormap engine — generates continuous color scales for risk visualization with proper legend rendering |
+| Tool                 | Why This Tool                                                                                                                                                                   |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Streamlit**        | Single Python file with no frontend code required. Auto-deploys from GitHub. Free HTTPS hosting on Community Cloud. The fastest path from model to stakeholder-facing interface |
+| **Folium**           | GeoPandas-native map rendering — `HeatMap`, `GeoJson`, and `CircleMarker` layers compose directly from DataFrames. Interactive tooltips enable per-segment inspection           |
+| **streamlit-folium** | Bidirectional bridge between Streamlit and Folium — captures map click events and passes segment IDs back to Python for SHAP panel updates                                      |
+| **Branca**           | Folium's colormap engine — generates continuous color scales for risk visualization with proper legend rendering                                                                |
 
 ### Data Sources
 
-| Source | What It Provides | Why Open |
-|---|---|---|
-| **ALA (Atlas of Living Australia)** | ~200k verified Australian biodiversity sightings | Government-curated, species-validated, Australia-specific |
-| **GBIF** | ~213k additional global occurrence records filtered to AU | Larger global dataset with different (complementary) observer networks |
-| **GeoFabrik OSM** | Complete Australia road network as a GeoPackage | Full road topology, attribute schema, licence-free |
-| **NASA AppEEARS (MODIS MOD13A3)** | 150 monthly NDVI rasters at 1km resolution | Free NASA Earthdata portal; 2020–2026 date range aligns with sightings |
-| **ABS ASGS** | State and territory boundary shapefiles | Official Australian Bureau of Statistics geometry |
+| Source                              | What It Provides                                          | Why Open                                                               |
+| ----------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------- |
+| **ALA (Atlas of Living Australia)** | ~200k verified Australian biodiversity sightings          | Government-curated, species-validated, Australia-specific              |
+| **GBIF**                            | ~213k additional global occurrence records filtered to AU | Larger global dataset with different (complementary) observer networks |
+| **GeoFabrik OSM**                   | Complete Australia road network as a GeoPackage           | Full road topology, attribute schema, licence-free                     |
+| **NASA AppEEARS (MODIS MOD13A3)**   | 150 monthly NDVI rasters at 1km resolution                | Free NASA Earthdata portal; 2020–2026 date range aligns with sightings |
+| **ABS ASGS**                        | State and territory boundary shapefiles                   | Official Australian Bureau of Statistics geometry                      |
 
 All five data sources are **100% free and openly licensed**. The entire pipeline can be reproduced by anyone with an internet connection and a registered AppEEARS account.
 
@@ -371,18 +393,18 @@ All five data sources are **100% free and openly licensed**. The entire pipeline
 
 ## 📈 Current Status
 
-| Phase | Description | Key Details | Status |
-|---|---|---|---|
-| **1** | Data ingestion (ALA + GBIF) | Async HTTPX + Requests; 11 species × 8 states/territories | ✅ Complete |
-| **2** | Data cleaning + deduplication | Null removal · bounding-box filter · temporal filter (2020–2026) | ✅ Complete |
-| **3** | Spatial join to road network + state boundaries | Nearest-neighbour join in EPSG:32754; `distance_to_road` column | ✅ Complete |
-| **4** | Feature engineering | NDVI composite; ecological weights; season mapping | ✅ Complete |
-| **5** | Proxy label construction | Ecological × road exposure · spatial lag blend · rank normalisation | ✅ Complete |
-| **6** | Model training (XGBoost + SHAP + Moran's I) | Stochastic spatial block CV · spatial lag input features · SHAP values | ✅ Complete |
-| **7** | Optuna hyperparameter search | 50-trial Bayesian optimisation (TPE sampler, multi-seed CV) | ✅ Complete |
-| **8** | Sign placement engine | Risk threshold > 0.98 · per-state selection · 2km buffer dedup · 1,189 signs | ✅ Complete |
-| **9** | Streamlit + Folium application | Risk heatmap · segment overlay · SHAP waterfall panel | ✅ Complete |
-| **10** | METHODOLOGY.md + documentation | Data provenance · label rationale · Moran's I result · limitations | ✅ Complete |
+| Phase  | Description                                     | Key Details                                                                  | Status      |
+| ------ | ----------------------------------------------- | ---------------------------------------------------------------------------- | ----------- |
+| **1**  | Data ingestion (ALA + GBIF)                     | Async HTTPX + Requests; 11 species × 8 states/territories                    | ✅ Complete |
+| **2**  | Data cleaning + deduplication                   | Null removal · bounding-box filter · temporal filter (2020–2026)             | ✅ Complete |
+| **3**  | Spatial join to road network + state boundaries | Nearest-neighbour join in EPSG:32754; `distance_to_road` column              | ✅ Complete |
+| **4**  | Feature engineering                             | NDVI composite; ecological weights; season mapping                           | ✅ Complete |
+| **5**  | Proxy label construction                        | Ecological × road exposure · spatial lag blend · rank normalisation          | ✅ Complete |
+| **6**  | Model training (XGBoost + SHAP + Moran's I)     | Stochastic spatial block CV · spatial lag input features · SHAP values       | ✅ Complete |
+| **7**  | Optuna hyperparameter search                    | 50-trial Bayesian optimisation (TPE sampler, multi-seed CV)                  | ✅ Complete |
+| **8**  | Sign placement engine                           | Risk threshold > 0.98 · per-state selection · 2km buffer dedup · 1,189 signs | ✅ Complete |
+| **9**  | Streamlit + Folium application                  | Risk heatmap · segment overlay · SHAP waterfall panel                        | ✅ Complete |
+| **10** | METHODOLOGY.md + documentation                  | Data provenance · label rationale · Moran's I result · limitations           | ✅ Complete |
 
 **Pipeline output:**
 
@@ -400,38 +422,37 @@ All five data sources are **100% free and openly licensed**. The entire pipeline
 
 ### Technical Targets
 
-| Metric | Target | Result | Status |
-|---|---|---|---|
-| App initial load time | ≤ 5 seconds | < 3 seconds | ✅ Met |
-| SHAP coverage | 100% of features | 100% | ✅ Met |
-| SHAP plot generation | < 5 seconds | < 2 seconds | ✅ Met |
-| Peak memory usage | ≤ 1GB | ~200MB pipeline · ~400MB app | ✅ Met |
-| Initial page | — | ~0.9 seconds | ✅ Optimised |
-| Metric cards | — | ~2.1 seconds | ✅ Optimised |
-| Map (full load) | — | ~3.56 seconds | ✅ Optimised |
-| Memory vs. naive baseline | — | 60–70% lower | ✅ Optimised |
-| Heatmap render points | — | 15,000 (sampled) | ✅ Smooth rendering |
+| Metric                    | Target           | Result                       | Status              |
+| ------------------------- | ---------------- | ---------------------------- | ------------------- |
+| App initial load time     | ≤ 5 seconds      | < 3 seconds                  | ✅ Met              |
+| SHAP coverage             | 100% of features | 100%                         | ✅ Met              |
+| SHAP plot generation      | < 5 seconds      | < 2 seconds                  | ✅ Met              |
+| Peak memory usage         | ≤ 1GB            | ~200MB pipeline · ~400MB app | ✅ Met              |
+| Initial page              | —                | ~0.9 seconds                 | ✅ Optimised        |
+| Metric cards              | —                | ~2.1 seconds                 | ✅ Optimised        |
+| Map (full load)           | —                | ~3.56 seconds                | ✅ Optimised        |
+| Memory vs. naive baseline | —                | 60–70% lower                 | ✅ Optimised        |
 
 ### Scale Achieved
 
-| Metric | Target | Result | Status |
-|---|---|---|---|
-| Road segments scored | ≥ 50,000 | 99,739 | ✅ Exceeded |
-| High-risk segments (risk > 0.98) | ≥ 500 | 2,239 | ✅ Exceeded |
-| Warning sign recommendations | ≥ 300 locations | 1,189 | ✅ Exceeded |
-| States/territories covered | All 8 | All 8 | ✅ Met |
-| Open data sources | 100% | 100% | ✅ Met |
+| Metric                           | Target          | Result | Status      |
+| -------------------------------- | --------------- | ------ | ----------- |
+| Road segments scored             | ≥ 50,000        | 99,739 | ✅ Exceeded |
+| High-risk segments (risk > 0.98) | ≥ 500           | 2,239  | ✅ Exceeded |
+| Warning sign recommendations     | ≥ 300 locations | 1,189  | ✅ Exceeded |
+| States/territories covered       | All 8           | All 8  | ✅ Met      |
+| Open data sources                | 100%            | 100%   | ✅ Met      |
 
 ## 📉 Model Evaluation Results
 
-| Metric | Result | Target | Status |
-|---|---|---|---|
-| Spatial CV R² (Optuna-optimised) | 0.9743 ± 0.0002 | ≥ 0.60 | ✅ Exceeded |
-| Spatial CV MAE (Optuna-optimised) | 0.0337 ± 0.0007 | ≤ 0.08 | ✅ Exceeded |
-| Moran's I on target | 0.4117 | — | Documented |
-| Moran's I on residuals | 0.3081 | — | 25.2% explained |
-| Tasmania holdout R (direct) | 0.9835 | — | ✅ Strong generalisation |
-| Tasmania ceiling achieved | 97.4% | — | ✅ Circularity addressed |
+| Metric                            | Result          | Target | Status                   |
+| --------------------------------- | --------------- | ------ | ------------------------ |
+| Spatial CV R² (Optuna-optimised)  | 0.9743 ± 0.0002 | ≥ 0.60 | ✅ Exceeded              |
+| Spatial CV MAE (Optuna-optimised) | 0.0337 ± 0.0007 | ≤ 0.08 | ✅ Exceeded              |
+| Moran's I on target               | 0.4117          | —      | Documented               |
+| Moran's I on residuals            | 0.3081          | —      | 25.2% explained          |
+| Tasmania holdout R (direct)       | 0.9835          | —      | ✅ Strong generalisation |
+| Tasmania ceiling achieved         | 97.4%           | —      | ✅ Circularity addressed |
 
 ### Geographic Generalisation — Tasmania Holdout
 
@@ -467,11 +488,11 @@ pip install -r requirements.txt
 
 Place the following in `data/raw/` before running the pipeline:
 
-| File | Source | Notes |
-| --- | --- | --- |
-| `road_network.gpkg` | [GeoFabrik OSM](https://download.geofabrik.de/australia-oceania/australia.html) | Australia road network (~600MB) |
-| `SA1_2021_AUST_GDA2020.shp` (+ sidecar files) | [ABS ASGS](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files) | State boundary shapefiles |
-| Monthly NDVI `.tif` files | [NASA AppEEARS](https://appeears.earthdatacloud.nasa.gov/) · MODIS MOD13A3 v061 | Place in `data/raw/vegetation/` |
+| File                                          | Source                                                                                                                                                                       | Notes                           |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `road_network.gpkg`                           | [GeoFabrik OSM](https://download.geofabrik.de/australia-oceania/australia.html)                                                                                              | Australia road network (~600MB) |
+| `SA1_2021_AUST_GDA2020.shp` (+ sidecar files) | [ABS ASGS](https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs-edition-3/jul2021-jun2026/access-and-downloads/digital-boundary-files) | State boundary shapefiles       |
+| Monthly NDVI `.tif` files                     | [NASA AppEEARS](https://appeears.earthdatacloud.nasa.gov/) · MODIS MOD13A3 v061                                                                                              | Place in `data/raw/vegetation/` |
 
 ### Running the Pipeline
 
@@ -537,7 +558,7 @@ aus-wildlife-roadkill-risk-mapper/
 │   │   ├── state_boundaries.parquet  # state boundaries of Australia
 │   │   └── state_boundaries_simplified.parquet  # simplified state boundaries for web rendering
 │   └── raw/ (gitignored)        # Shapefiles, GeoPackage, NDVI rasters
-├── docs/screenshots/            # Screenshots of the webapp 
+├── docs/screenshots/            # Screenshots of the webapp
 ├── notebooks/test.ipynb         # Jupyter notebook for exploration
 ├── scripts/
 │   ├── fetcher.py               # ALA/GBIF ingestion · cleaning · road/NDVI preprocessing
@@ -610,7 +631,7 @@ The methodology is grounded in systematic data collection, rigorous feature engi
 
 This platform is designed to be **directly used by road authorities**. The `sign_placements.geojson` output contains point geometries with full attribute data (`road_segment_id`, `predicted_risk`, `road_class`, `speed_limit`, `state`) that can be imported into ArcGIS, QGIS, or any government GIS system with zero additional processing.
 
-The SHAP explainability layer means that when a state roads department asks *"why is this location flagged?"*, the answer is available at the feature level: *"This segment was scored high primarily because of high wombat sighting density (SHAP +0.14), proximity to the road under 20m (SHAP +0.11), and it falls within wombat breeding season (SHAP +0.08)."*
+The SHAP explainability layer means that when a state roads department asks _"why is this location flagged?"_, the answer is available at the feature level: _"This segment was scored high primarily because of high wombat sighting density (SHAP +0.14), proximity to the road under 20m (SHAP +0.11), and it falls within wombat breeding season (SHAP +0.08)."_
 
 This transforms the tool from a black-box recommender into an **evidence-based, defensible decision-support system** suitable for official infrastructure planning.
 
@@ -626,13 +647,13 @@ This transforms the tool from a black-box recommender into an **evidence-based, 
 
 ## 📜 Open Science Commitment
 
-| Principle | Implementation |
-|---|---|
-| **Reproducibility** | All data sources are free and publicly available; full pipeline is open-source |
-| **Transparency** | SHAP values expose every prediction; METHODOLOGY.md documents all design decisions |
-| **Auditability** | Moran's I residual test provides an independent spatial leakage check |
-| **Extensibility** | Modular script architecture; adding a new species requires only a GBIF key and a few weight values |
-| **No proprietary lock-in** | Zero paid APIs, zero commercial tools, zero proprietary data formats |
+| Principle                  | Implementation                                                                                     |
+| -------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Reproducibility**        | All data sources are free and publicly available; full pipeline is open-source                     |
+| **Transparency**           | SHAP values expose every prediction; METHODOLOGY.md documents all design decisions                 |
+| **Auditability**           | Moran's I residual test provides an independent spatial leakage check                              |
+| **Extensibility**          | Modular script architecture; adding a new species requires only a GBIF key and a few weight values |
+| **No proprietary lock-in** | Zero paid APIs, zero commercial tools, zero proprietary data formats                               |
 
 ---
 
@@ -658,7 +679,7 @@ Built with the following open-source libraries: [Streamlit](https://streamlit.io
 
 <div align="center">
 
-*Every line of code, every design decision, and every result is fully open and reproducible.*
+_Every line of code, every design decision, and every result is fully open and reproducible._
 
 **🦘 For the animals. 🌿 For the science. 🛣️ For safer roads.**
 

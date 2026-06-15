@@ -598,47 +598,60 @@ achievable.
 ### 9.1 Streamlit Application Design
 
 The Streamlit application (`app/streamlit_app.py`) provides an interactive web
-interface for exploring model outputs. The architecture follows a component-based
-design pattern with clear separation of concerns:
+interface for exploring model outputs. The architecture follows a modular,
+multipage component-based design pattern that decouples data management, visualization,
+and page layout:
 
-**Core Components:**
-- `map_view.py` — Folium map construction, layer management, and click event parsing
-- `shap_panel.py` — SHAP waterfall plot generation and segment attribution display
+**Entry Point and Page Router (`app/streamlit_app.py`):**
+- Coordinates global configurations (`layout="wide"`, page titles, and icons) and session defaults.
+- Utilizes Streamlit's native `st.navigation` and `st.Page` routing mechanism to register and transition between the five primary views, injecting a unified CSS stylesheet, brand lockup, and standard footer around each view.
+
+**Modular Page Views (`app/components/views/`):**
+- `overview.py` — Renders the national landing page featuring aggregate statistics, a state-level risk choropleth, and a selection-enabled national hotspot leaderboard.
+- `explorer.py` — Acts as the decision-support workhorse, allowing users to apply multi-select state and road class filters, view filtered segments on an interactive map, and inspect ranked priorities in a sortable table.
+- `segment_detail.py` — Serves as a single-segment inspection dashboard, displaying high-fidelity KPI metric cards, sign recommendation checks, a locator map, and local SHAP explanations.
+- `sign_placements.py` — Compiles and visualizes the network of 1,189 recommended sign locations, displaying state-by-state breakdowns and offering data export options.
+- `methodology.py` — Injects the comprehensive methodology documentation, model validation metrics, and limitations directly into the application interface.
+
+**Core Supporting Components (`app/components/`):**
+- `data.py` — Implements the cached data access layer. Prunes and memoizes GeoParquet and GeoJSON reads to minimize the in-memory footprint on resource-constrained platforms.
+- `maps.py` — Handles pydeck Mapbox-free basemap construction. Leverages WebGL for client-side rendering of dense vector lines and scatter layers, and implements selection parsing algorithms.
+- `shap_panel.py` — Extracts model coefficients and local feature matrices to render Matplotlib-based SHAP waterfall diagrams using a headless backend, caching outputs by segment ID.
+- `theme.py` — Defines the eucalyptus-and-paper conservation brand identity, maps risk scores to a unified warning gradient, and builds custom HTML wrappers for KPI cards and headers.
+- `ui.py` — Provides version-tolerant UI abstractions (e.g., fallback options for dataframe and map selections on older Streamlit versions) and programmatic navigation helpers.
 
 **Performance Optimisations:**
-- `@st.cache_data` decorators on all data loading functions prevent redundant I/O
-- Heatmap point sampling (15,000 max) keeps initial render under 3 seconds
-- Deep copy of cached Folium maps prevents st_folium from mutating cached objects
-- GeoJSON simplification (0.01° tolerance) reduces state boundary payload by ~80%
+- **WebGL Rendering via Pydeck**: Replaces Folium with pydeck, rendering tens of thousands of segments and recommended sign locations client-side to prevent DOM bloating and server-side lag.
+- **Cached View-Models**: Pre-computes geometric and fill colors inside `@st.cache_data` loops so that map layers render instantly on page reruns without executing red and green color-interpolation math.
+- **Selective Column Loading**: Restricts Parquet reads strictly to the ~10 columns required by the UI (from the 25 present in the raw files), reducing the memory footprint on Streamlit Community Cloud.
+- **Pre-Aggregated Global Views**: Avoids loading the full 99k segment network on initial load, displaying state polygons at the national level and exposing dense segments only upon filtering or drilling down.
+- **Headless Plot Caching**: Renders Matplotlib SHAP plots on the headless 'Agg' backend and caches the output bytes per segment ID, preventing CPU thrashing on re-selection.
 
-**Interactive Features:**
-- Four toggleable map layers: state boundaries, occurrence heatmap, high-risk segments, sign placements
-- Click-to-inspect workflow: clicking a sign marker updates the SHAP panel via session state
-- Tooltip-on-hover for all map features with formatted HTML styling
-- Fullscreen map control for detailed inspection
+### 9.2 Data Flow and Navigation Architecture
 
-### 9.2 Data Flow Architecture
+The application implements a reactive, state-driven navigation flow where interaction with maps, leaderboards, or tables shifts focus dynamically:
 
 ```text
-User clicks sign marker
+User selects segment (via Pydeck map click or Dataframe row select)
     ↓
-st_folium captures click event → returns HTML tooltip content
+st.pydeck_chart() / st.dataframe() captures event (on_select="rerun")
     ↓
-parse_clicked_segment() extracts road_segment_id via regex
+ui.select_row() or maps.parse_selection() extracts road_segment_id
     ↓
-st.session_state.selected_segment updated
+st.session_state.selected_segment updated with target ID
     ↓
-st.rerun() triggers SHAP panel refresh
+ui.goto("detail") invokes st.switch_page() to trigger view transition
     ↓
-render_shap_panel() loads SHAP values for selected segment
+segment_detail.render() reads cached attributes for selected segment
     ↓
-generate_waterfall_plot() creates matplotlib figure
+shap_panel.render_shap_panel() loads SHAP values for segment ID
     ↓
-Image displayed in right-hand panel
+generate_waterfall_plot() pulls cached PNG bytes (or renders using headless Agg)
+    ↓
+Segment metrics, localized locator map, and SHAP panel display in detail view
 ```
 
-This architecture ensures the SHAP panel updates reactively without full page reload,
-maintaining map state and layer selections across interactions.
+This state-driven architecture ensures that the application operates as a single cohesive platform rather than disjointed scripts, maintaining user context (e.g., segment selection) across distinct views without full page reloads.
 
 ### 9.3 Deployment Considerations
 
@@ -650,7 +663,7 @@ following constraints respected:
 - **Cold start time**: Initial load completes in <5 seconds via aggressive caching
 - **No external dependencies**: All data files are committed to the repository (within GitHub's 100MB file limit)
 
-The application can also be run locally via `streamlit run app/streamlit_app.py`
+The application can also be run locally via `uv run streamlit run app/streamlit_app.py`
 for development and testing.
 
 ---
