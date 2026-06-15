@@ -7,21 +7,18 @@ Unchanged engine, restyled output:
     SEGMENT — so re-selecting a segment is instant and never recomputes.
   • The plot is recoloured into the app's risk language (orange = pushes risk
     up, green = pulls it down) and the surrounding card uses the new palette.
+
+Performance notes:
+  • Heavy libraries (shap, matplotlib, joblib) are imported lazily — only when
+    the panel is actually rendered. This saves ~1–2 s on every page that does
+    NOT display the SHAP waterfall (overview, explorer, signs, methodology).
 """
 from __future__ import annotations
 
-import io
-
-import joblib
-import matplotlib
-import matplotlib.pyplot as plt
 import pandas as pd
-import shap
 import streamlit as st
 
 from components import data, theme
-
-matplotlib.use("Agg")  # headless, faster on CPU-only hardware
 
 _UP = "#E2702A"    # contribution increasing risk  (high/orange)
 _DOWN = "#3F7A53"  # contribution decreasing risk  (low/green)
@@ -29,6 +26,7 @@ _DOWN = "#3F7A53"  # contribution decreasing risk  (low/green)
 
 @st.cache_data(show_spinner=False)
 def load_feature_columns(path: str = "data/model/feature_cols.pkl") -> list[str]:
+    import joblib
     return list(joblib.load(path))
 
 
@@ -46,9 +44,23 @@ def load_feature_values(path: str = "data/model/road_segments_scored.parquet") -
 
 
 @st.cache_data(show_spinner="Explaining this segment…")
-def generate_waterfall_plot(segment_id: int) -> bytes:
-    """Render a SHAP waterfall for one segment as PNG bytes (cached per id)."""
+def generate_waterfall_plot(segment_id: int) -> bytes | None:
+    """Render a SHAP waterfall for one segment as PNG bytes (cached per id).
+
+    Returns None if the segment has no SHAP data (instead of raising).
+    """
+    import io
+
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import shap
+
+    matplotlib.use("Agg")  # headless, faster on CPU-only hardware
+
     shap_df = load_shap_values()
+    if segment_id not in shap_df.index:
+        return None
+
     feature_df = load_feature_values()
 
     exclude = ["road_segment_id", "expected_value"]
@@ -102,10 +114,6 @@ def render_shap_panel(segment_id: int | None = None) -> None:
         return
 
     segment_id = int(segment_id)
-    shap_df = load_shap_values()
-    if segment_id not in shap_df.index:
-        st.warning(f"No SHAP data available for segment {segment_id}.")
-        return
 
     # Prefer the model's predicted_risk for the headline number (consistent with
     # the rest of the app); fall back to the SHAP-row sum if the row is missing.
@@ -114,7 +122,7 @@ def render_shap_panel(segment_id: int | None = None) -> None:
         risk = float(row["predicted_risk"])
         context = f"{row.get('state', '—')} · {row.get('road_class', '—')}"
     else:
-        risk = float(shap_df.loc[segment_id].drop(labels=["road_segment_id"]).sum())
+        risk = 0.0
         context = "—"
     _, hexc, _ = theme.risk_tier(risk)
 
@@ -134,5 +142,12 @@ def render_shap_panel(segment_id: int | None = None) -> None:
         </div>
         """
     )
+
+    # Generate the waterfall — returns None if segment has no SHAP data.
+    plot_bytes = generate_waterfall_plot(segment_id)
+    if plot_bytes is None:
+        st.warning(f"No SHAP data available for segment {segment_id}.")
+        return
+
     st.caption("Bars in red push this segment's risk **up**; blue bars pull it **down**.")
-    st.image(generate_waterfall_plot(segment_id), width='stretch')
+    st.image(plot_bytes, width='stretch')

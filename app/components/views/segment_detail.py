@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from components import data, maps, shap_panel, theme, ui
+from components import data, maps, theme, ui
 
 
 def _picker() -> None:
@@ -83,6 +83,7 @@ def render() -> None:
     with right:
         theme.section_header("Risk attribution", "Which factors pushed this "
                              "segment's score up or down.", eyebrow="Why")
+        from components import shap_panel
         shap_panel.render_shap_panel(int(sid))
 
     st.write("")

@@ -110,6 +110,7 @@ section[data-testid="stSidebar"] .block-container {
 .rw-brand {
   position: fixed;
   bottom: 0px;
+  left: 8px;
   display: flex;
   align-items: center;
   gap: 0.7rem;

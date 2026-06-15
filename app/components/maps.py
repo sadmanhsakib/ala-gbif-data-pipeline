@@ -50,19 +50,24 @@ def state_choropleth_geojson(metric: str = "critical_segments") -> dict:
 
     Only 8 features — trivially light. Colour is precomputed into each feature's
     `fill_color` property so the map layer is pure render.
+    Uses assign() to avoid mutating the cached source GeoDataFrame.
     """
-    gdf = data.load_boundaries().copy()
+    gdf = data.load_boundaries()
     stats = data.state_stats().set_index("state")
+    cols_to_add = {}
     for col in ["total_segments", "critical_segments", "mean_risk", "max_risk"]:
-        gdf[col] = gdf["state"].map(stats[col]) if col in stats.columns else 0
+        cols_to_add[col] = gdf["state"].map(stats[col]) if col in stats.columns else 0
+    gdf = gdf.assign(**cols_to_add)
 
     vals = pd.to_numeric(gdf[metric], errors="coerce").fillna(0.0)
     vmax = float(vals.max()) or 1.0
-    gdf["fill_color"] = [theme.sequential_risk_rgb(v / vmax, alpha=145) for v in vals]
-    gdf["mean_risk_fmt"] = pd.to_numeric(gdf["mean_risk"], errors="coerce").map(
-        lambda v: f"{v:.3f}" if pd.notna(v) else "—")
-    gdf["max_risk_fmt"] = pd.to_numeric(gdf["max_risk"], errors="coerce").map(
-        lambda v: f"{v:.3f}" if pd.notna(v) else "—")
+    gdf = gdf.assign(
+        fill_color=[theme.sequential_risk_rgb(v / vmax, alpha=145) for v in vals],
+        mean_risk_fmt=pd.to_numeric(gdf["mean_risk"], errors="coerce").map(
+            lambda v: f"{v:.3f}" if pd.notna(v) else "—"),
+        max_risk_fmt=pd.to_numeric(gdf["max_risk"], errors="coerce").map(
+            lambda v: f"{v:.3f}" if pd.notna(v) else "—"),
+    )
     return json.loads(gdf.to_json())
 
 
@@ -73,20 +78,19 @@ def segments_geojson(
     min_risk: float = data.CRITICAL_THRESHOLD,
     limit: int = data.EXPLORER_MAX_SEGMENTS,
 ) -> dict:
-    """Filtered high-risk segments as coloured GeoJSON lines (capped at `limit`)."""
+    """Filtered high-risk segments as coloured GeoJSON lines (capped at `limit`).
+
+    Reuses filter_segments() for the filtered+ranked IDs, then selects
+    matching geometries — avoids duplicating the filter/sort logic.
+    """
+    filtered_df = data.filter_segments(states, road_classes, min_risk, limit)
+    if filtered_df.empty:
+        return {"type": "FeatureCollection", "features": []}
+    ids = set(filtered_df["road_segment_id"].tolist())
     gdf = data.load_segments()
-    mask = gdf["predicted_risk"] >= min_risk
-    if states:
-        mask &= gdf["state"].isin(states)
-    if road_classes:
-        mask &= gdf["road_class"].astype(str).isin(road_classes)
-    sub = (
-        gdf.loc[mask]
-        .nlargest(limit, "predicted_risk")[
-            ["road_segment_id", "predicted_risk", "state", "road_class", "geometry"]
-        ]
-        .copy()
-    )
+    sub = gdf[gdf["road_segment_id"].isin(ids)][
+        ["road_segment_id", "predicted_risk", "state", "road_class", "geometry"]
+    ].copy()
     sub["color"] = sub["predicted_risk"].map(
         lambda r: theme.sequential_risk_rgb(theme.norm_risk(r), alpha=235))
     sub["risk_fmt"] = sub["predicted_risk"].map(lambda r: f"{r:.4f}")
@@ -95,11 +99,10 @@ def segments_geojson(
 
 @st.cache_data(show_spinner=False)
 def signs_for_map(state: str | None = None) -> pd.DataFrame:
-    """Sign placements with a formatted risk string, optionally state-filtered."""
-    df = data.load_signs().copy()
+    """Sign placements optionally state-filtered. risk_fmt is precomputed."""
+    df = data.load_signs()
     if state and state != "All states":
         df = df[df["state"] == state]
-    df["risk_fmt"] = df["predicted_risk"].map(lambda r: f"{r:.3f}")
     return df
 
 

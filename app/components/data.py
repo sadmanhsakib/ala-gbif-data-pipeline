@@ -70,25 +70,22 @@ def load_boundaries() -> gpd.GeoDataFrame:
 def load_signs() -> pd.DataFrame:
     """The 1,189 recommended sign placements as a flat DataFrame.
 
-    Pre-computes a per-point RGB colour from its risk tier so the map layer is
-    pure render (no colour math on rerun).
+    Pre-computes a per-point RGB colour and formatted risk string from its risk
+    tier so the map layer is pure render (no colour or string math on rerun).
+    Uses gpd.read_file (C-level GDAL parser) instead of a Python for-loop.
     """
-    with open(SIGNS_PATH, encoding="utf-8") as f:
-        gj = json.load(f)
-    rows = []
-    for feat in gj["features"]:
-        lon, lat = feat["geometry"]["coordinates"]
-        p = feat["properties"]
-        risk = float(p.get("predicted_risk", 0.0))
-        rows.append({
-            "road_segment_id": int(p["road_segment_id"]),
-            "state": p.get("state", "—"),
-            "predicted_risk": risk,
-            "lon": float(lon),
-            "lat": float(lat),
-            "color": theme.sequential_risk_rgb(theme.norm_risk(risk), alpha=235),
-        })
-    return pd.DataFrame(rows)
+    gdf = gpd.read_file(SIGNS_PATH)
+    df = pd.DataFrame({
+        "road_segment_id": gdf["road_segment_id"].astype(int),
+        "state": gdf["state"].fillna("—"),
+        "predicted_risk": gdf["predicted_risk"].astype(float),
+        "lon": gdf.geometry.x.astype(float),
+        "lat": gdf.geometry.y.astype(float),
+    })
+    df["color"] = df["predicted_risk"].map(
+        lambda r: theme.sequential_risk_rgb(theme.norm_risk(r), alpha=235))
+    df["risk_fmt"] = df["predicted_risk"].map(lambda r: f"{r:.3f}")
+    return df
 
 
 # ── Derived tables / aggregates ───────────────────────────────────────────────
@@ -96,11 +93,12 @@ def load_signs() -> pd.DataFrame:
 def segment_table() -> pd.DataFrame:
     """Flat, geometry-free table for sortable explorer + leaderboards.
 
-    Adds a representative lon/lat so the detail view can zoom to a segment
-    without re-touching the (heavy) geometry column.
+    Adds a centroid lon/lat so the detail view can zoom to a segment
+    without re-touching the (heavy) geometry column. Uses centroid (fast)
+    instead of representative_point (expensive GEOS op on ~99K geometries).
     """
     gdf = load_segments()
-    pts = gdf.geometry.representative_point()
+    centroids = gdf.to_crs(epsg=3857).geometry.centroid
     df = pd.DataFrame({
         "road_segment_id": gdf["road_segment_id"].astype(int),
         "state": gdf["state"],
@@ -110,8 +108,8 @@ def segment_table() -> pd.DataFrame:
         "sighting_count": gdf["sighting_count"],
         "species_richness": gdf["species_richness"],
         "traffic_proxy": gdf["traffic_proxy"],
-        "lon": pts.x.astype(float),
-        "lat": pts.y.astype(float),
+        "lon": centroids.x.astype(float),
+        "lat": centroids.y.astype(float),
     })
     df["risk_tier"] = df["predicted_risk"].map(lambda s: theme.risk_tier(s)[0])
     return df

@@ -11,6 +11,11 @@ font = "sans serif"
 [server]
 fileWatcherType = "none"
 enableStaticServing = true
+runOnSave = false
+maxUploadSize = 1
+
+[runner]
+fastReruns = true
 
 [browser]
 gatherUsageStats = false
