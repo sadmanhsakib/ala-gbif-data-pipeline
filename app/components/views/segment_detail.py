@@ -64,7 +64,7 @@ def render() -> None:
 
     left, right = st.columns([1, 1], gap="large")
     with left:
-        theme.section_header("Location", "Zoom and pan to see the segment in context.",
+        theme.section_header("Location:", "Zoom and pan to see the segment in context.",
                              eyebrow="Where")
         geojson = data.segment_geojson(int(sid))
         sign_row = None

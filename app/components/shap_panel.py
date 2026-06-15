@@ -123,11 +123,11 @@ def render_shap_panel(segment_id: int | None = None) -> None:
         <div style="background:{theme.PAPER}; border:1px solid {theme.BORDER};
                     border-left:4px solid {hexc}; border-radius:12px;
                     padding:1rem 1.1rem; margin-bottom:1rem;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:.68rem;
+          <div style="font-family:'Fira Code',monospace; font-size:.68rem;
                       letter-spacing:.12em; text-transform:uppercase; color:{theme.BARK};">
             Segment Analysis
           </div>
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:1.5rem;
+          <div style="font-family:'Fira Code',monospace; font-size:1.5rem;
                       font-weight:600; color:{theme.INK}; margin:.15rem 0;">#{segment_id}</div>
           <div style="font-size:.85rem; color:{theme.INK_2};">{context}</div>
           <div style="margin-top:.55rem;">{theme.risk_chip(risk)}</div>

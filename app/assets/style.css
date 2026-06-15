@@ -7,7 +7,32 @@
    custom components rendered via st.html (hero, metric band, chips, sections).
    ========================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Fira+Code:wght@500;600&family=IBM+Plex+Serif:wght@500;600&display=swap");
+/* IBM Plex Sans */
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/static/fonts/ibm-plex-sans-600.woff2") format("woff2");
+}
+
+/* Fira Code */
+@font-face {
+  font-family: "Fira Code";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/static/fonts/fira-code-600.woff2") format("woff2");
+}
+
+/* IBM Plex Serif */
+@font-face {
+  font-family: "IBM Plex Serif";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/static/fonts/ibm-plex-serif-600.woff2") format("woff2");
+}
 
 :root {
   --paper: #f6f4ee;
@@ -238,7 +263,7 @@ section[data-testid="stSidebar"] .block-container {
 .rw-metric-value {
   font-family: var(--mono);
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
   line-height: 1.15;
@@ -334,7 +359,7 @@ section[data-testid="stSidebar"] .block-container {
 }
 .rw-footer-link {
   font-family: var(--mono);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--bark);
 }
 
