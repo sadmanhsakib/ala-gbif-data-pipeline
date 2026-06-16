@@ -224,6 +224,31 @@ def segment_locator_map(seg_geojson: dict, lat: float, lon: float,
     return m
 
 
+# ── Cached HTML Builders for Performance ──────────────────────────────────────
+@st.cache_data(show_spinner=False)
+def get_national_overview_html() -> str:
+    """Pre-render and cache the HTML string for the overview map. Zero CPU on reruns."""
+    return national_overview_map()._repr_html_()
+
+@st.cache_data(show_spinner=False)
+def get_segment_locator_html(segment_id: int) -> str | None:
+    """Pre-render and cache the HTML string for a segment locator map."""
+    row = data.get_segment_row(segment_id)
+    if not row:
+        return None
+    lat, lon = float(row["lat"]), float(row["lon"])
+    
+    signs = signs_for_map()
+    has_sign = segment_id in set(signs["road_segment_id"])
+    sign_row = None
+    if has_sign:
+        r = signs[signs["road_segment_id"] == segment_id].iloc[0]
+        sign_row = {"lon": float(r["lon"]), "lat": float(r["lat"])}
+        
+    seg_geojson = data.segment_geojson(segment_id)
+    return segment_locator_map(seg_geojson, lat, lon, sign_row)._repr_html_()
+
+
 # ── Selection parsing (map click → segment id), version-tolerant ──────────────
 def parse_selection(event) -> int | None:
     """Extract a road_segment_id from an st_folium return dict."""

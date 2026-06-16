@@ -72,14 +72,11 @@ def render() -> None:
             r = signs[signs["road_segment_id"] == int(sid)].iloc[0]
             sign_row = {"lon": float(r["lon"]), "lat": float(r["lat"])}
         if geojson:
-            from streamlit_folium import st_folium
-            st_folium(
-                maps.segment_locator_map(geojson, float(row["lat"]),
-                                          float(row["lon"]), sign_row),
-                width='100%',
-                height=380,
-                returned_objects=[]
-            )
+            html = maps.get_segment_locator_html(int(sid))
+            if html:
+                ui.render_static_map(html, height=380)
+            else:
+                st.caption("Unable to render segment map.")
         else:
             st.caption("No geometry available for this segment.")
 
