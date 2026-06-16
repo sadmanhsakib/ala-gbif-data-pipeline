@@ -39,16 +39,6 @@ def render() -> None:
     ])
 
     theme.section_header(
-        "Where risk concentrates?",
-        "Each state is shaded by its number of critical segments; amber dots mark "
-        "recommended sign sites. Hover any state for its risk profile.",
-        eyebrow="National map",
-    )
-    with st.spinner("Rendering national map…"):
-        html = maps.get_national_overview_html()
-        ui.render_static_map(html, height=520)
-
-    theme.section_header(
         "Top 10 hotspots:",
         "The single highest-risk segments in the country — your first places to "
         "act. Select any row to open its full risk analysis.",
@@ -72,7 +62,17 @@ def render() -> None:
     )
     if selected is not None:
         ui.goto("detail", int(selected["road_segment_id"]))
-
+    
+    theme.section_header(
+        "Where risk concentrates?",
+        "Each state is shaded by its number of critical segments; amber dots mark "
+        "recommended sign sites. Hover any state for its risk profile.",
+        eyebrow="National map",
+    )
+    with st.spinner("Rendering national map…"):
+        html = maps.get_national_overview_html()
+        ui.render_static_map(html, height=520)
+    
     st.write("")
     if st.button("Explore all high-risk segments →", type="primary"):
         ui.goto("explorer")

@@ -42,21 +42,6 @@ def render() -> None:
                    "or clearing a filter.")
         return
 
-    st.caption(
-        f"Showing the **{len(df):,}** highest-risk segments at or above risk "
-        f"**{min_risk:.3f}** (capped at {data.EXPLORER_MAX_SEGMENTS:,} for "
-        f"performance)."
-    )
-
-    theme.section_header("Risk map:", "Lines are coloured by risk — deeper red is "
-                         "higher. Hover for detail; click a segment to inspect it.",
-                         eyebrow="Filtered view")
-    geojson = maps.segments_geojson(tuple(states), tuple(classes), min_risk)
-    event = ui.select_on_map(maps.explorer_map(geojson, show_signs), key="explorer_map")
-    clicked = maps.parse_selection(event)
-    if clicked:
-        ui.goto("detail", clicked)
-
     theme.section_header("Ranked segments:", "Sort by any column. Select a row to "
                          "open its full analysis, or export the list below.",
                          eyebrow="Priority table")
@@ -85,3 +70,18 @@ def render() -> None:
         file_name="high_risk_segments.csv",
         mime="text/csv",
     )
+    
+    st.caption(
+        f"Showing the **{len(df):,}** highest-risk segments at or above risk "
+        f"**{min_risk:.3f}** (capped at {data.EXPLORER_MAX_SEGMENTS:,} for "
+        f"performance)."
+    )
+    theme.section_header("Risk map:", "Lines are coloured by risk — deeper red is "
+                         "higher. Hover for detail; click a segment to inspect it.",
+                         eyebrow="Filtered view")
+    geojson = maps.segments_geojson(tuple(states), tuple(classes), min_risk)
+    event = ui.select_on_map(maps.explorer_map(geojson, show_signs), key="explorer_map")
+    clicked = maps.parse_selection(event)
+    if clicked:
+        ui.goto("detail", clicked)
+

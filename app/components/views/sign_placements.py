@@ -44,23 +44,6 @@ def render() -> None:
                           theme.BARK),
     ])
 
-    theme.section_header(
-        "Recommended sign network:",
-        "Every dot is a proposed sign site, colour-graded by segment risk. Filter "
-        "by state, hover for detail, or click a site to open its full analysis.",
-        eyebrow="Where to act",
-    )
-    state = st.selectbox(
-        "State / territory",
-        ["All states"] + sorted(signs["state"].dropna().unique().tolist()),
-    )
-    df = maps.signs_for_map(state)
-    geojson_data = maps.signs_geojson(state)
-    event = ui.select_on_map(maps.signs_map(df, geojson_data), key="signs_map")
-    clicked = maps.parse_selection(event)
-    if clicked:
-        ui.goto("detail", clicked)
-
     theme.section_header("Signs by state:", "How the recommended placements are "
                          "distributed across the country.", eyebrow="Breakdown")
     breakdown = by_state.rename("signs").reset_index()
@@ -78,3 +61,20 @@ def render() -> None:
         file_name="recommended_sign_placements.csv",
         mime="text/csv",
     )
+
+    theme.section_header(
+        "Recommended sign network:",
+        "Every dot is a proposed sign site, colour-graded by segment risk. Filter "
+        "by state, hover for detail, or click a site to open its full analysis.",
+        eyebrow="Where to act",
+    )
+    state = st.selectbox(
+        "State / territory",
+        ["All states"] + sorted(signs["state"].dropna().unique().tolist()),
+    )
+    df = maps.signs_for_map(state)
+    geojson_data = maps.signs_geojson(state)
+    event = ui.select_on_map(maps.signs_map(df, geojson_data), key="signs_map")
+    clicked = maps.parse_selection(event)
+    if clicked:
+        ui.goto("detail", clicked)
