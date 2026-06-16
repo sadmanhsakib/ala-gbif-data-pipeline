@@ -75,6 +75,26 @@ def signs_for_map(state: str | None = None) -> pd.DataFrame:
     return df
 
 
+@st.cache_data(show_spinner=False)
+def signs_geojson(state: str | None = None) -> dict:
+    """Pre-computed GeoJSON for sign placements to avoid Folium iteration overhead."""
+    df = signs_for_map(state)
+    features = []
+    for _, row in df.iterrows():
+        color = theme.sequential_risk_hex(theme.norm_risk(row["predicted_risk"]))
+        features.append({
+            "type": "Feature",
+            "geometry": {"type": "Point", "coordinates": [row["lon"], row["lat"]]},
+            "properties": {
+                "road_segment_id": int(row["road_segment_id"]),
+                "state": row["state"],
+                "risk_fmt": row["risk_fmt"],
+                "color": color
+            }
+        })
+    return {"type": "FeatureCollection", "features": features}
+
+
 # ── Map builders ──────────────────────────────────────────────────────────────
 def _base_map(location=(-25.6, 134.0), zoom_start=4) -> folium.Map:
     m = folium.Map(
@@ -86,24 +106,25 @@ def _base_map(location=(-25.6, 134.0), zoom_start=4) -> folium.Map:
     return m
 
 
-def _add_signs(m: folium.Map, df: pd.DataFrame, interactive: bool = False) -> None:
-    for idx, row in df.iterrows():
-        tooltip = None
-        if interactive:
-            tooltip = folium.Tooltip(
-                f"<b>Recommended sign</b><br/>Segment {row['road_segment_id']}<br/>{row['state']} &middot; risk {row['risk_fmt']}"
-            )
+def _add_signs(m: folium.Map, geojson_data: dict, interactive: bool = False) -> None:
+    if not geojson_data or not geojson_data.get("features"):
+        return
         
-        folium.CircleMarker(
-            location=[row["lat"], row["lon"]],
-            radius=4,
-            color="#FFFFFF",
-            weight=1,
-            fill=True,
-            fill_color=theme.sequential_risk_hex(theme.norm_risk(row["predicted_risk"])),
-            fill_opacity=0.8,
-            tooltip=tooltip,
-        ).add_to(m)
+    tooltip = None
+    if interactive:
+        tooltip = folium.GeoJsonTooltip(
+            fields=['road_segment_id', 'state', 'risk_fmt'],
+            aliases=['Segment:', 'State:', 'Risk:'],
+            style="background-color: #243B2E; color: #F6F4EE; font-family: monospace; border-radius: 8px; padding: 9px 12px;"
+        )
+        
+    folium.GeoJson(
+        geojson_data,
+        marker=folium.CircleMarker(radius=4, fill=True, fillOpacity=0.8, weight=1, color='#FFFFFF'),
+        style_function=lambda feature: {'fillColor': feature['properties']['color']},
+        tooltip=tooltip,
+        name="Signs"
+    ).add_to(m)
 
 
 def national_overview_map() -> folium.Map:
@@ -139,7 +160,7 @@ def national_overview_map() -> folium.Map:
         name="States"
     ).add_to(m)
     
-    _add_signs(m, signs_for_map(), interactive=False)
+    _add_signs(m, signs_geojson(), interactive=False)
     return m
 
 
@@ -179,16 +200,16 @@ def explorer_map(geojson: dict, show_signs: bool = False) -> folium.Map:
         m.fit_bounds(segments_layer.get_bounds())
 
     if show_signs:
-        _add_signs(m, signs_for_map(), interactive=False)
+        _add_signs(m, signs_geojson(), interactive=False)
         
     return m
 
 
-def signs_map(df: pd.DataFrame) -> folium.Map:
+def signs_map(df: pd.DataFrame, geojson_data: dict) -> folium.Map:
     """All (or state-filtered) recommended sign placements — the 'where to act' map."""
     m = _base_map()
     
-    _add_signs(m, df, interactive=True)
+    _add_signs(m, geojson_data, interactive=True)
     
     if not df.empty:
         sw = [df['lat'].min(), df['lon'].min()]

@@ -55,7 +55,8 @@ def render() -> None:
         ["All states"] + sorted(signs["state"].dropna().unique().tolist()),
     )
     df = maps.signs_for_map(state)
-    event = ui.select_on_map(maps.signs_map(df), key="signs_map")
+    geojson_data = maps.signs_geojson(state)
+    event = ui.select_on_map(maps.signs_map(df, geojson_data), key="signs_map")
     clicked = maps.parse_selection(event)
     if clicked:
         ui.goto("detail", clicked)
