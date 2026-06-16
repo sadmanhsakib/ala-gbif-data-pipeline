@@ -54,8 +54,8 @@ def select_on_map(map_obj, key: str, height: int = 460):
 
 def render_static_map(html_str: str, height: int = 460):
     """Render a pre-computed HTML map extremely fast without any callbacks."""
-    import streamlit.components.v1 as components
-    components.html(html_str, height=height)
+    import streamlit as st
+    st.iframe(html_str, height=height)
 
 
 def goto(page_key: str, segment_id: int | None = None) -> None:

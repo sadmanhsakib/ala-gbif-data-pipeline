@@ -103,6 +103,11 @@ def _base_map(location=(-25.6, 134.0), zoom_start=4) -> folium.Map:
         tiles=MAP_STYLE,
         control_scale=True,
     )
+    
+    # Remove the default browser focus outline (black box) when clicking elements
+    css = "<style> path:focus { outline: none; } .leaflet-interactive:focus { outline: none; } svg:focus { outline: none; } </style>"
+    m.get_root().html.add_child(folium.Element(css))
+    
     return m
 
 
@@ -249,7 +254,7 @@ def segment_locator_map(seg_geojson: dict, lat: float, lon: float,
 @st.cache_data(show_spinner=False)
 def get_national_overview_html() -> str:
     """Pre-render and cache the HTML string for the overview map. Zero CPU on reruns."""
-    return national_overview_map()._repr_html_()
+    return national_overview_map().get_root().render()
 
 @st.cache_data(show_spinner=False)
 def get_segment_locator_html(segment_id: int) -> str | None:
@@ -267,7 +272,7 @@ def get_segment_locator_html(segment_id: int) -> str | None:
         sign_row = {"lon": float(r["lon"]), "lat": float(r["lat"])}
         
     seg_geojson = data.segment_geojson(segment_id)
-    return segment_locator_map(seg_geojson, lat, lon, sign_row)._repr_html_()
+    return segment_locator_map(seg_geojson, lat, lon, sign_row).get_root().render()
 
 
 # ── Selection parsing (map click → segment id), version-tolerant ──────────────
