@@ -1,5 +1,5 @@
 """
-maps.py — folium map builders (replaces the pydeck implementation).
+maps.py — folium map builders.
 
 Performance pattern:
   • Heavy GeoJSON view-models are built in @st.cache_data functions with

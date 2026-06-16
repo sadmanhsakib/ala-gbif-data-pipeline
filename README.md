@@ -39,51 +39,44 @@ Built entirely on 100% open data and open-source tools, it can be reproduced, au
 
 ## 📸 Application Interface & Core Views
 
-The interactive Streamlit application provides a multipage workspace for exploring model outputs, auditing segment risk factors, and reviewing signage proposals. The visual system uses the "Bushland & Hazard" design theme (warm eucalyptus green and Aussie-soil tones) structured into five distinct functional views.
+The interactive Streamlit application is structured into **five distinct functional views** under the "Bushland & Hazard" design theme — from national-scale hotspot discovery through per-segment SHAP diagnostics to GIS-ready sign placement export.
 
-### 1. National Overview
-
-Renders the high-level landing page, summarizing national network stats, state-by-state risk distributions, and a prioritized list of hotspots.
-
-![National Overview interface showing KPI cards, state risk choropleth map, and top hotspot table](docs/screenshots/1-national-overview.png)
-_National dashboard with WebGL state-level choropleth showing where critical road segments are concentrated._
-
----
-
-### 2. Risk Explorer
-
-Provides dynamic filtering (by state, road class, and risk threshold) to subset the national network. Features a high-performance WebGL segment map and interactive ranked list with download options.
-
-![Risk Explorer showing filters and high-risk segment path overlay on map](docs/screenshots/2-risk-explorer.png)
-
-_WebGL-rendered road segment paths colored by risk tier, paired with a sortable, row-selectable priority table that routes straight to detailed analysis._
-
-### 3. Segment Detail
-
-The diagnostic deep dive. For any individual segment, it details the specific features driving the risk prediction and visualizes its localized geometry.
-
-#### 🎛️ SHAP Risk Attribution Waterfall
-
-![SHAP waterfall chart with custom green and orange color ramp for feature contributions](docs/screenshots/3-detail-shap.png)
-_Detailed inspection view featuring metric bands, warning sign status checks, a high-zoom segment locator map, and a color-coded SHAP waterfall plot showing positive (red) and negative (blue) feature attributions._
-
----
-
-### 4. Sign Placements
-
-The actionable planning tool. Maps the 1,189 recommended warning sign sites, shows state-by-state resource allocation, and allows downloading the coordinates as GIS-ready GeoJSON or CSV data.
-
-![Sign Placements page showing recommended sign markers across Australia and state breakdown](docs/screenshots/4-sign-placements.png)
-_Sign placement overview with recommended sign coordinates on the national map, filtered by state._
-
----
-
-### 5. Methodology & Data
-
-In-app documentation displaying system parameters, validation metrics (R², MAE, Moran's I), and design limitations to establish transparency.
-
-![Methodology & Data page showing system equations, validation summaries, and limitations](docs/screenshots/5-methodology-view.png)
-_Comprehensive documentation integrated directly into the web application chrome to support non-technical reviewer audits._
+<table style="width: 100%; max-width: 800px; margin: 0 auto; border-collapse: collapse;">
+  <tr>
+    <td width="33.3%" align="center" valign="top" style="padding: 10px;">
+      <img src="docs/screenshots/1-national-overview.png" alt="National Overview" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <strong>National Overview</strong><br/>
+      <em>KPI cards · state choropleth · top-hotspot ranking table</em>
+    </td>
+    <td width="33.3%" align="center" valign="top" style="padding: 10px;">
+      <img src="docs/screenshots/2-risk-explorer.png" alt="Risk Explorer" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <strong>Risk Explorer</strong><br/>
+      <em>State / road class / threshold filters · risk-tiered segment overlay · sortable priority table</em>
+    </td>
+    <td width="33.3%" align="center" valign="top" style="padding: 10px;">
+      <img src="docs/screenshots/3-detail-shap.png" alt="Segment Detail — SHAP Waterfall" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <strong>Segment Detail</strong><br/>
+      <em>High-zoom locator map · SHAP waterfall attribution by feature</em>
+    </td>
+  </tr>
+  <tr>
+    <td width="33.3%" align="center" valign="top" style="padding: 10px;">
+      <img src="docs/screenshots/4-sign-placements.png" alt="Sign Placements" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <strong>Sign Placements</strong><br/>
+      <em>1,189 recommended sites · state breakdown · GeoJSON / CSV export</em>
+    </td>
+    <td width="33.3%" align="center" valign="top" style="padding: 10px;">
+      <img src="docs/screenshots/5-methodology-view.png" alt="Methodology & Data" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <strong>Methodology & Data</strong><br/>
+      <em>Proxy label approx · formulas · Data sources & coverage</em>
+    </td>
+    <td width="33.3%" align="center" valign="top" style="padding: 10px;">
+      <img src="docs/screenshots/5-methodology-view2.png" alt="Methodology & Data" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <strong>Methodology & Data</strong><br/>
+      <em>Validation strategy · performance metrics · spatial autocorrelation · design limitations </em>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -192,10 +185,10 @@ The platform is a sequential, modular pipeline — from raw API calls to a live 
                                  │
                                  ▼
 ╔══════════════════════════════════════════════════════════════════════╗
-║               STREAMLIT APPLICATION (Community Cloud)                ║
-║  Folium risk heatmap · High-risk segment overlay                     ║
+║               STREAMLIT APPLICATION (Hugging Face)                   ║
+║  Folium state choropleth · High-risk segment overlay                 ║
 ║  Sign placement markers · SHAP waterfall on click                    ║
-║  Species / season / state / risk filters in sidebar                  ║
+║  State / road class / risk threshold filters in Explorer             ║
 ╚══════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -205,21 +198,45 @@ The platform is a sequential, modular pipeline — from raw API calls to a live 
 
 ### 1. Spatially-Lagged Proxy Label
 
-The system has no direct observational roadkill counts. Instead, it constructs a rigorous **proxy risk label** from first principles. The key innovation is the **spatial lag blending step**, which injects neighbourhood context into the label:
+The system has no direct observational roadkill counts. Instead, it constructs a rigorous **proxy risk label** from first principles. The key innovation is the **spatial lag blending step**, which injects neighbourhood context into the label. The diagram below illustrates the full label construction pipeline:
 
-```python
-# Step 1: Compute raw risk from ecology and road exposure
-raw_risk = ecological_score × road_exposure_score
+```mermaid
+flowchart LR
+    subgraph ECO["Ecological Dimension"]
+        E1["Sighting Density\n(norm)"]
+        E2["NDVI · Habitat Quality\n(norm)"]
+        E3["Species Richness\n(norm)"]
+        E4["Peak Season Weight\n(norm)"]
+        E5["Nocturnal Weight\n(norm)"]
+        E6["Body Mass Weight\n(norm)"]
+    end
 
-# Step 2: Compute spatial lag using PySAL KNN(k=5)
-# Each segment's label is influenced by 5 nearest neighbours
-spatial_lag = lag_spatial(w, raw_risk)   # row-standardised weights
+    subgraph ROAD["Road Exposure Dimension"]
+        R1["Speed Limit\n(norm)"]
+        R2["Proximity to Road\n(norm)"]
+        R3["Traffic Proxy\n(norm)"]
+    end
 
-# Step 3: Blend — 70% local signal, 30% neighbourhood context
-blended_risk = 0.7 × raw_risk + 0.3 × spatial_lag
+    ES["ecological_score\n(weighted sum)"]
+    RS["road_exposure_score\n(weighted sum)"]
 
-# Step 4: Rank normalise to [0, 1]
-proxy_risk = percentile_rank(blended_risk)
+    E1 & E2 & E3 & E4 & E5 & E6 --> ES
+    R1 & R2 & R3 --> RS
+
+    RR["raw_risk\n= ecological × road_exposure"]
+    ES & RS --> RR
+
+    SL["spatial_lag\n= KNN(k=5) weighted\navg of neighbours"]
+    RR --> SL
+
+    BR["blended_risk\n= 0.7 × raw + 0.3 × lag"]
+    RR & SL --> BR
+
+    PR["proxy_risk\n= percentile_rank → [0, 1]"]
+    BR --> PR
+
+    style ECO fill:#1a3a1a,stroke:#4caf50,color:#e8f5e9
+    style ROAD fill:#3a1a1a,stroke:#f44336,color:#ffebee
 ```
 
 **Why this matters:** The spatial lag makes the label **non-recoverable by formula**. No model can perfectly predict the label by just computing the raw ecological and road scores, because those scores don't contain the neighbourhood context encoded in the lag. This forces the model to learn genuine spatial generalisation patterns rather than memorising the label construction formula.
@@ -241,13 +258,21 @@ This gives XGBoost explicit neighbourhood context as input features, reducing th
 
 Standard random CV is catastrophically wrong for spatial data. If a model trains on segments 50m from a test segment, it will appear to generalise when it's actually interpolating. This platform uses **stochastic spatial block CV with jittered boundaries**:
 
-```python
-def assign_jittered_blocks(gdf, block_size=50_000, jitter_range=15_000):
-    # Randomly shift the 50km×50km grid by ±15km for each fold
-    jitter_x = np.random.uniform(-jitter_range, jitter_range)
-    jitter_y = np.random.uniform(-jitter_range, jitter_range)
-    # Assign each segment to its jittered block
-    ...
+```mermaid
+flowchart LR
+    A["Road Segments\n(EPSG:32754)"] --> B["Assign 50km × 50km\nGrid Blocks"]
+    B --> C["Apply ±15km Random\nBoundary Jitter per Fold"]
+    C --> D{"5-Fold\nGroupKFold\nCV Split"}
+    D --> E1["Fold 1\nTrain / Test"]
+    D --> E2["Fold 2\nTrain / Test"]
+    D --> E3["Fold 3\nTrain / Test"]
+    D --> E4["Fold 4\nTrain / Test"]
+    D --> E5["Fold 5\nTrain / Test"]
+    E1 & E2 & E3 & E4 & E5 --> F["Aggregate: CV R² · CV MAE\n(genuine out-of-sample estimate)"]
+
+    style A fill:#1a2a3a,stroke:#2196f3,color:#e3f2fd
+    style D fill:#3a2a1a,stroke:#ff9800,color:#fff3e0
+    style F fill:#1a3a1a,stroke:#4caf50,color:#e8f5e9
 ```
 
 Segments near block boundaries rotate between train and test sets across folds. The result is CV metrics that reflect **genuine out-of-sample spatial generalisation** — not interpolation between nearby points.
@@ -393,20 +418,34 @@ All five data sources are **100% free and openly licensed**. The entire pipeline
 
 ## 📈 Current Status
 
-| Phase  | Description                                     | Key Details                                                                  | Status      |
-| ------ | ----------------------------------------------- | ---------------------------------------------------------------------------- | ----------- |
-| **1**  | Data ingestion (ALA + GBIF)                     | Async HTTPX + Requests; 11 species × 8 states/territories                    | ✅ Complete |
-| **2**  | Data cleaning + deduplication                   | Null removal · bounding-box filter · temporal filter (2020–2026)             | ✅ Complete |
-| **3**  | Spatial join to road network + state boundaries | Nearest-neighbour join in EPSG:32754; `distance_to_road` column              | ✅ Complete |
-| **4**  | Feature engineering                             | NDVI composite; ecological weights; season mapping                           | ✅ Complete |
-| **5**  | Proxy label construction                        | Ecological × road exposure · spatial lag blend · rank normalisation          | ✅ Complete |
-| **6**  | Model training (XGBoost + SHAP + Moran's I)     | Stochastic spatial block CV · spatial lag input features · SHAP values       | ✅ Complete |
-| **7**  | Optuna hyperparameter search                    | 50-trial Bayesian optimisation (TPE sampler, multi-seed CV)                  | ✅ Complete |
-| **8**  | Sign placement engine                           | Risk threshold > 0.98 · per-state selection · 2km buffer dedup · 1,189 signs | ✅ Complete |
-| **9**  | Streamlit + Folium application                  | Risk heatmap · segment overlay · SHAP waterfall panel                        | ✅ Complete |
-| **10** | METHODOLOGY.md + documentation                  | Data provenance · label rationale · Moran's I result · limitations           | ✅ Complete |
+All development phases have been completed and the platform is fully deployed. The Gantt chart below illustrates phase sequencing and interdependencies across the pipeline:
 
-**Pipeline output:**
+```mermaid
+gantt
+    title Pipeline Development Phases — Australian Wildlife Roadkill Risk Mapper
+    dateFormat  YYYY-MM-DD
+    axisFormat  Phase %d
+
+    section Data Acquisition
+    Data ingestion (ALA + GBIF)          :done, p1, 2024-01-01, 2d
+    Data cleaning + deduplication        :done, p2, after p1, 1d
+
+    section Spatial Processing
+    Spatial join — road network + states :done, p3, after p2, 2d
+    Feature engineering (NDVI, weights)  :done, p4, after p3, 2d
+
+    section Modelling
+    Proxy label construction             :done, p5, after p4, 1d
+    XGBoost training + SHAP + Moran I    :done, p6, after p5, 3d
+    Optuna hyperparameter search         :done, p7, after p6, 2d
+
+    section Deployment
+    Sign placement engine                :done, p8, after p7, 1d
+    Streamlit + Folium application       :done, p9, after p8, 3d
+    METHODOLOGY.md + documentation       :done, p10, after p9, 2d
+```
+
+**Pipeline output artefacts:**
 
 - `sightings.parquet` — 413,000 sighting rows · 11 species · 17 features · ~18MB
 - `data/processed/road_segments.parquet` — Proxy risk score per road segment · ~53MB
@@ -422,16 +461,15 @@ All five data sources are **100% free and openly licensed**. The entire pipeline
 
 ### Technical Targets
 
-| Metric                    | Target           | Result                       | Status              |
-| ------------------------- | ---------------- | ---------------------------- | ------------------- |
-| App initial load time     | ≤ 5 seconds      | < 3 seconds                  | ✅ Met              |
-| SHAP coverage             | 100% of features | 100%                         | ✅ Met              |
-| SHAP plot generation      | < 5 seconds      | < 2 seconds                  | ✅ Met              |
-| Peak memory usage         | ≤ 1GB            | ~200MB pipeline · ~400MB app | ✅ Met              |
-| Initial page              | —                | ~0.9 seconds                 | ✅ Optimised        |
-| Metric cards              | —                | ~2.1 seconds                 | ✅ Optimised        |
-| Map (full load)           | —                | ~3.56 seconds                | ✅ Optimised        |
-| Memory vs. naive baseline | —                | 60–70% lower                 | ✅ Optimised        |
+| Metric                | Target           | Result                       | Status       |
+| --------------------- | ---------------- | ---------------------------- | ------------ |
+| App initial load time | ≤ 5 seconds      | ~2.25 seconds                | ✅ Met       |
+| SHAP coverage         | 100% of features | 100%                         | ✅ Met       |
+| SHAP plot generation  | < 5 seconds      | < 2 seconds                  | ✅ Met       |
+| Peak memory usage     | ≤ 1GB            | ~200MB pipeline · ~400MB app | ✅ Met       |
+| Initial page          | —                | ~2 seconds                   | ✅ Optimised |
+| Metric cards          | —                | ~2.1 seconds                 | ✅ Optimised |
+| Map (full load)       | —                | ~2.25 seconds                | ✅ Optimised |
 
 ### Scale Achieved
 
@@ -444,6 +482,21 @@ All five data sources are **100% free and openly licensed**. The entire pipeline
 | Open data sources                | 100%            | 100%   | ✅ Met      |
 
 ## 📉 Model Evaluation Results
+
+```mermaid
+quadrantChart
+    title Model Performance vs. Spatial Generalisation
+    x-axis "Lower Generalisation" --> "Higher Generalisation"
+    y-axis "Lower Accuracy" --> "Higher Accuracy"
+    quadrant-1 "Target Zone"
+    quadrant-2 "Overfit Risk"
+    quadrant-3 "Underperforming"
+    quadrant-4 "Spatially Biased"
+    "Spatial CV R² (0.9743)": [0.97, 0.97]
+    "Tasmania Holdout R (0.9835)": [0.98, 0.95]
+    "CV MAE (0.0337)": [0.96, 0.96]
+    "Moran I Residuals (0.3081)": [0.75, 0.70]
+```
 
 | Metric                            | Result          | Target | Status                   |
 | --------------------------------- | --------------- | ------ | ------------------------ |
@@ -540,10 +593,21 @@ aus-wildlife-roadkill-risk-mapper/
 │   │   ├── footer.html          # Application footer HTML
 │   │   └── style.css            # Custom CSS styling
 │   ├── components/
-│   │   ├── map_view.py          # Folium map builder with layer controls
-│   │   └── shap_panel.py        # Per-segment SHAP waterfall charts
+│   │   ├── views/               # contains each web page
+│   │   │   ├── __init__.py
+│   │   │   ├── explorer.py
+│   │   │   ├── methodology.py
+│   │   │   ├── overview.py
+│   │   │   ├── segment_detail.py
+│   │   │   └── sign_placements.py
+│   │   ├── __init__.py
+│   │   ├── data.py              # data loading helpers
+│   │   ├── maps.py              # Folium map builders
+│   │   ├── shap_panel.py        # Per-segment SHAP waterfall charts
+│   │   ├── theme.py             # reusable UI fragments
+│   │   └── ui.py                # contains the interaction helpers
+│   ├── static/                  # Folder for static serving
 │   └── streamlit_app.py         # Main application entry point
-├── backup/                      # Per-species enriched parquet files (11 files)
 ├── data/
 │   ├── model/                   # Model files
 │   │   ├── feature_cols.pkl     # Serialised feature column list
@@ -565,11 +629,10 @@ aus-wildlife-roadkill-risk-mapper/
 │   ├── analyzer.py              # Spatial joins · NDVI sampling · proxy label construction
 │   ├── model.py                 # XGBoost training · Optuna · spatial block CV · SHAP · Moran's I
 │   └── sign_placement.py        # Risk threshold + 2km buffer spatial deduplication engine
-├── sightings/                   # Per-species spatially-joined parquet files (11 files)
 ├── sightings.parquet            # Final feature store — 413k rows, 17 features (~18MB)
 ├── METHODOLOGY.md               # Research design, label rationale, validation, limitations
-├── requirements.txt
-└── LICENSE
+├── pyproject.toml               # Python project metadata and dependency management for uv
+└── LICENSE                      # MIT License
 ```
 
 ---
@@ -594,25 +657,25 @@ Results are reprojected back to **EPSG:4326** (WGS84 geographic) for Streamlit/F
 
 ### Ecological Risk Score Design
 
-The `ecological_score` uses a weighted combination of five normalised features:
+The `ecological_score` integrates six normalised ecological features under the following weighted formulation:
 
-```text
-ecological_score =
-  0.30 × norm(sighting_count)        # abundance at this segment
-+ 0.20 × norm(mean_ndvi)             # habitat quality
-+ 0.15 × norm(species_richness)      # biodiversity breadth
-+ 0.15 × norm(mean_peak_season_wt)   # seasonal activity elevation
-+ 0.10 × norm(mean_nocturnal_wt)     # night movement risk
-+ 0.10 × norm(mean_body_mass_wt)     # collision severity potential
+```mermaid
+pie title Ecological Score Feature Weights
+    "Sighting Count (abundance)" : 30
+    "Mean NDVI (habitat quality)" : 20
+    "Species Richness (biodiversity)" : 15
+    "Peak Season Weight (seasonality)" : 15
+    "Nocturnal Weight (night-movement risk)" : 10
+    "Body Mass Weight (collision severity)" : 10
 ```
 
-The `road_exposure_score` encodes the infrastructure danger:
+The `road_exposure_score` encodes the infrastructure danger under a complementary weighted formulation:
 
-```text
-road_exposure_score =
-  0.35 × norm(speed_limit)           # kinetic energy of potential collision
-+ 0.35 × norm(proximity)             # how close animals get to the road
-+ 0.30 × norm(traffic_proxy)         # vehicle frequency
+```mermaid
+pie title Road Exposure Score Feature Weights
+    "Speed Limit (kinetic energy of collision)" : 35
+    "Proximity to Road (animal–road distance)" : 35
+    "Traffic Proxy (vehicle frequency)" : 30
 ```
 
 The **multiplicative combination** (`raw_risk = ecological × road_exposure`) enforces that **both** conditions must co-occur for risk to be non-zero. A high-speed motorway through a wildlife-free zone scores low. An animal hotspot on a barely-used track scores low. Only segments where wildlife regularly approaches dangerous roads score high.

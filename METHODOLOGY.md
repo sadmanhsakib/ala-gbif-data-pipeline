@@ -615,14 +615,15 @@ and page layout:
 
 **Core Supporting Components (`app/components/`):**
 - `data.py` — Implements the cached data access layer. Prunes and memoizes GeoParquet and GeoJSON reads to minimize the in-memory footprint on resource-constrained platforms.
-- `maps.py` — Handles pydeck Mapbox-free basemap construction. Leverages WebGL for client-side rendering of dense vector lines and scatter layers, and implements selection parsing algorithms.
+- `maps.py` — Handles Folium basemap construction and layer generation. Leverages pre-computed GeoJSON layers to minimize Python looping overhead, provides cached static HTML generators for non-interactive maps, and implements version-tolerant selection parsing.
 - `shap_panel.py` — Extracts model coefficients and local feature matrices to render Matplotlib-based SHAP waterfall diagrams using a headless backend, caching outputs by segment ID.
 - `theme.py` — Defines the eucalyptus-and-paper conservation brand identity, maps risk scores to a unified warning gradient, and builds custom HTML wrappers for KPI cards and headers.
 - `ui.py` — Provides version-tolerant UI abstractions (e.g., fallback options for dataframe and map selections on older Streamlit versions) and programmatic navigation helpers.
 
 **Performance Optimisations:**
-- **WebGL Rendering via Pydeck**: Replaces Folium with pydeck, rendering tens of thousands of segments and recommended sign locations client-side to prevent DOM bloating and server-side lag.
-- **Cached View-Models**: Pre-computes geometric and fill colors inside `@st.cache_data` loops so that map layers render instantly on page reruns without executing red and green color-interpolation math.
+- **Pre-Rendered Static HTML Maps**: Bypasses traditional bidirectional Streamlit components for non-interactive views (like the national overview) by caching the raw map HTML (`folium.Map.get_root().render()`) and embedding it directly via `st.iframe`. This eliminates Folium generation CPU cycles on reruns and drastically cuts load times on low-resource environments (like the Hugging Face free tier).
+- **Optimized Interactive Map Serialization**: For interactive maps (e.g., Risk Explorer), pre-computes dense geometries (like the 1,189 recommended signs) into single `folium.GeoJson` FeatureCollections rather than individual marker objects. This minimizes the JSON payload serialized across the `streamlit-folium` websocket, preventing frontend lag.
+- **Cached View-Models**: Pre-computes geometric and fill colors inside `@st.cache_data` loops so that map data is ready instantly on page reruns without executing red and green color-interpolation math.
 - **Selective Column Loading**: Restricts Parquet reads strictly to the ~10 columns required by the UI (from the 25 present in the raw files), reducing the memory footprint on Streamlit Community Cloud.
 - **Pre-Aggregated Global Views**: Avoids loading the full 99k segment network on initial load, displaying state polygons at the national level and exposing dense segments only upon filtering or drilling down.
 - **Headless Plot Caching**: Renders Matplotlib SHAP plots on the headless 'Agg' backend and caches the output bytes per segment ID, preventing CPU thrashing on re-selection.
