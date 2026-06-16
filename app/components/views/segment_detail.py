@@ -64,7 +64,7 @@ def render() -> None:
 
     left, right = st.columns([1, 1], gap="large")
     with left:
-        theme.section_header("Location", "Zoom and pan to see the segment in context.",
+        theme.section_header("Location:", "Zoom and pan to see the segment in context.",
                              eyebrow="Where")
         geojson = data.segment_geojson(int(sid))
         sign_row = None
@@ -81,7 +81,7 @@ def render() -> None:
             st.caption("No geometry available for this segment.")
 
     with right:
-        theme.section_header("Risk attribution", "Which factors pushed this "
+        theme.section_header("Risk attribution:", "Which factors pushed this "
                              "segment's score up or down.", eyebrow="Why")
         from components import shap_panel
         shap_panel.render_shap_panel(int(sid))

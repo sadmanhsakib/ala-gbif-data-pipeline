@@ -7,7 +7,7 @@
    custom components rendered via st.html (hero, metric band, chips, sections).
    ========================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Fira+Code:wght@500;600&family=IBM+Plex+Serif:wght@500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@600&family=Fira+Code:wght@600&family=IBM+Plex+Serif:wght@600&display=swap");
 
 :root {
   --paper: #f6f4ee;
@@ -239,7 +239,7 @@ section[data-testid="stSidebar"] .block-container {
 .rw-metric-value {
   font-family: var(--mono);
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink);
   line-height: 1.15;
@@ -335,7 +335,7 @@ section[data-testid="stSidebar"] .block-container {
 }
 .rw-footer-link {
   font-family: var(--mono);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--bark);
 }
 

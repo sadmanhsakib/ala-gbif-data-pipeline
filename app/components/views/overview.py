@@ -39,7 +39,7 @@ def render() -> None:
     ])
 
     theme.section_header(
-        "Where risk concentrates",
+        "Where risk concentrates?",
         "Each state is shaded by its number of critical segments; amber dots mark "
         "recommended sign sites. Hover any state for its risk profile.",
         eyebrow="National map",
@@ -48,7 +48,7 @@ def render() -> None:
         st.pydeck_chart(maps.national_overview_deck(), width='stretch')
 
     theme.section_header(
-        "Top 10 hotspots",
+        "Top 10 hotspots:",
         "The single highest-risk segments in the country — your first places to "
         "act. Select any row to open its full risk analysis.",
         eyebrow="Priority queue",

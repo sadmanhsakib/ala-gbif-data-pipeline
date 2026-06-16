@@ -45,7 +45,7 @@ def render() -> None:
     ])
 
     theme.section_header(
-        "Recommended sign network",
+        "Recommended sign network:",
         "Every dot is a proposed sign site, colour-graded by segment risk. Filter "
         "by state, hover for detail, or click a site to open its full analysis.",
         eyebrow="Where to act",
@@ -60,7 +60,7 @@ def render() -> None:
     if clicked:
         ui.goto("detail", clicked)
 
-    theme.section_header("Signs by state", "How the recommended placements are "
+    theme.section_header("Signs by state:", "How the recommended placements are "
                          "distributed across the country.", eyebrow="Breakdown")
     breakdown = by_state.rename("signs").reset_index()
     st.dataframe(

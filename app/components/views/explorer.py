@@ -48,7 +48,7 @@ def render() -> None:
         f"performance)."
     )
 
-    theme.section_header("Risk map", "Lines are coloured by risk — deeper red is "
+    theme.section_header("Risk map:", "Lines are coloured by risk — deeper red is "
                          "higher. Hover for detail; click a segment to inspect it.",
                          eyebrow="Filtered view")
     geojson = maps.segments_geojson(tuple(states), tuple(classes), min_risk)
@@ -57,7 +57,7 @@ def render() -> None:
     if clicked:
         ui.goto("detail", clicked)
 
-    theme.section_header("Ranked segments", "Sort by any column. Select a row to "
+    theme.section_header("Ranked segments:", "Sort by any column. Select a row to "
                          "open its full analysis, or export the list below.",
                          eyebrow="Priority table")
     table = df[["road_segment_id", "state", "road_class", "speed_limit",

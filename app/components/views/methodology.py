@@ -48,7 +48,7 @@ def render() -> None:
 
     # ── 1. The hard problem ───────────────────────────────────────────────────
     theme.section_header(
-        "Why this is a hard problem",
+        "Why this is a hard problem?",
         eyebrow="Problem framing",
     )
     st.markdown(
@@ -67,7 +67,7 @@ def render() -> None:
 
     # ── 2. The proxy label approach ───────────────────────────────────────────
     theme.section_header(
-        "The proxy label approach",
+        "The proxy label approach:",
         "Without ground truth, we construct a surrogate risk score from "
         "observable correlates of collision risk and train a model to predict it.",
         eyebrow="Design decision",
@@ -90,7 +90,7 @@ def render() -> None:
 
     # ── 3. Label construction ─────────────────────────────────────────────────
     theme.section_header(
-        "How the proxy label is built",
+        "How the proxy label is built?",
         "Four steps transform raw data into a 0–1 risk ranking.",
         eyebrow="Label design",
     )
@@ -136,7 +136,7 @@ def render() -> None:
 
     # ── 4. Data sources ───────────────────────────────────────────────────────
     theme.section_header(
-        "Data sources & coverage",
+        "Data sources & coverage:",
         eyebrow="What powers the scores",
     )
     theme.render_metric_band([
@@ -169,7 +169,7 @@ def render() -> None:
 
     # ── 5. Feature engineering highlights ─────────────────────────────────────
     theme.section_header(
-        "What goes into a prediction",
+        "What goes into a prediction?",
         "The model blends three families of signal — plus spatial lags for "
         "features where neighbourhood context carries independent predictive "
         "information.",
@@ -196,7 +196,7 @@ def render() -> None:
 
     # ── 6. Model choice ──────────────────────────────────────────────────────
     theme.section_header(
-        "Why XGBoost",
+        "Why XGBoost?",
         eyebrow="Model selection",
     )
     st.markdown(
@@ -221,7 +221,7 @@ def render() -> None:
 
     # ── 7. Validation ─────────────────────────────────────────────────────────
     theme.section_header(
-        "Validation strategy",
+        "Validation strategy:",
         "Three complementary tests — because any single metric can be gamed "
         "by spatial autocorrelation.",
         eyebrow="How we know it works",
@@ -288,7 +288,7 @@ def render() -> None:
 
     # ── 8. Risk tiers ─────────────────────────────────────────────────────────
     theme.section_header(
-        "How to read the scores",
+        "How to read the scores?",
         "Risk is reported on a 0–1 scale and bucketed into four tiers.",
         eyebrow="Risk tiers",
     )
@@ -301,7 +301,7 @@ def render() -> None:
     st.html(f'<div style="line-height:2.2;">{chips}</div>')
 
     # ── 9. Sign placement logic ───────────────────────────────────────────────
-    theme.section_header("From scores to action", eyebrow="Sign logic")
+    theme.section_header("From scores to action:", eyebrow="Sign logic")
     st.markdown(
         "The highest-risk segments are promoted to a shortlist of **1,189 "
         "recommended warning-sign sites** (threshold: `predicted_risk ≥ 0.98`, "
@@ -322,7 +322,7 @@ def render() -> None:
 
     # ── 10. Limitations ───────────────────────────────────────────────────────
     theme.section_header(
-        "Limitations & honest caveats",
+        "Limitations & honest caveats:",
         "Please read before acting on these recommendations.",
         eyebrow="Read me",
     )
