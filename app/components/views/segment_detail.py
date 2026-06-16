@@ -72,10 +72,13 @@ def render() -> None:
             r = signs[signs["road_segment_id"] == int(sid)].iloc[0]
             sign_row = {"lon": float(r["lon"]), "lat": float(r["lat"])}
         if geojson:
-            st.pydeck_chart(
-                maps.segment_locator_deck(geojson, float(row["lat"]),
+            from streamlit_folium import st_folium
+            st_folium(
+                maps.segment_locator_map(geojson, float(row["lat"]),
                                           float(row["lon"]), sign_row),
-                width='stretch',
+                width='100%',
+                height=380,
+                returned_objects=[]
             )
         else:
             st.caption("No geometry available for this segment.")

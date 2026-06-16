@@ -52,7 +52,7 @@ def render() -> None:
                          "higher. Hover for detail; click a segment to inspect it.",
                          eyebrow="Filtered view")
     geojson = maps.segments_geojson(tuple(states), tuple(classes), min_risk)
-    event = ui.select_on_map(maps.explorer_deck(geojson, show_signs), key="explorer_map")
+    event = ui.select_on_map(maps.explorer_map(geojson, show_signs), key="explorer_map")
     clicked = maps.parse_selection(event)
     if clicked:
         ui.goto("detail", clicked)

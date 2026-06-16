@@ -34,13 +34,21 @@ def select_row(df: pd.DataFrame, key: str, column_config: dict | None = None,
         return df[df[id_col] == choice].iloc[0] if choice != "—" else None
 
 
-def select_on_map(deck, key: str):
-    """Render a pydeck chart with object selection; returns the event or None."""
+def select_on_map(map_obj, key: str, height: int = 460):
+    """Render a folium map with object selection; returns the event or None."""
+    from streamlit_folium import st_folium
     try:
-        return st.pydeck_chart(deck, width='stretch',
-                               on_select="rerun", selection_mode="single-object", key=key)
-    except TypeError:
-        st.pydeck_chart(deck, width='stretch')
+        return st_folium(
+            map_obj,
+            width='100%',
+            height=height,
+            returned_objects=["last_active_drawing", "last_object_clicked", "last_object_clicked_tooltip"],
+            key=key,
+        )
+    except Exception:
+        # Fallback if there are issues
+        from streamlit_folium import folium_static
+        folium_static(map_obj, width=700, height=height)
         return None
 
 

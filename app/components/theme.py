@@ -85,6 +85,12 @@ def sequential_risk_rgb(t: float, alpha: int = 220) -> list[int]:
     return list(RISK_STOPS[-1][2]) + [alpha]
 
 
+def sequential_risk_hex(t: float) -> str:
+    """Interpolate the risk ramp at position t∈[0,1] → #RRGGBB hex for folium."""
+    rgb = sequential_risk_rgb(t, alpha=255)
+    return f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}".upper()
+
+
 # ── CSS injection (cached so the file is read once per session) ───────────────
 @st.cache_data
 def _css(path: str = "app/assets/style.css") -> str:

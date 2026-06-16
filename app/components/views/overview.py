@@ -45,7 +45,8 @@ def render() -> None:
         eyebrow="National map",
     )
     with st.spinner("Rendering national map…"):
-        st.pydeck_chart(maps.national_overview_deck(), width='stretch')
+        from streamlit_folium import st_folium
+        st_folium(maps.national_overview_map(), width='100%', height=520, returned_objects=[])
 
     theme.section_header(
         "Top 10 hotspots:",
