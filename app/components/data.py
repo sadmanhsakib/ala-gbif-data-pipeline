@@ -99,6 +99,7 @@ def segment_table() -> pd.DataFrame:
     """
     gdf = load_segments()
     centroids = gdf.to_crs(epsg=3857).geometry.centroid
+    centroids_wgs84 = centroids.set_crs(epsg=3857).to_crs(epsg=4326)
     df = pd.DataFrame({
         "road_segment_id": gdf["road_segment_id"].astype(int),
         "state": gdf["state"],
@@ -108,8 +109,8 @@ def segment_table() -> pd.DataFrame:
         "sighting_count": gdf["sighting_count"],
         "species_richness": gdf["species_richness"],
         "traffic_proxy": gdf["traffic_proxy"],
-        "lon": centroids.x.astype(float),
-        "lat": centroids.y.astype(float),
+        "lon": centroids_wgs84.x.astype(float),
+        "lat": centroids_wgs84.y.astype(float),
     })
     df["risk_tier"] = df["predicted_risk"].map(lambda s: theme.risk_tier(s)[0])
     return df
