@@ -1,7 +1,7 @@
 [project]
 name = "aus-wildlife-roadkill-risk-mapper"
 version = "0.1.0"
-description = "A national-scale geospatial machine learning platform that scores every road segment in Australia for wildlife-vehicle collision risk — and recommends precisely where to place warning signs."
+description = "A Machine Learning platform that provides warning signs for wildlife-vehicle collisions."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -22,4 +22,16 @@ dependencies = [
     "streamlit>=1.57.0",
     "streamlit-folium>=0.21.0",
     "xgboost>=3.2.0",
+]
+
+[dependency-groups]
+run = [
+    "folium>=0.16.0",
+    "geopandas>=1.1.3",
+    "joblib>=1.5.3",
+    "matplotlib>=3.10.9",
+    "pandas>=3.0.3",
+    "shap>=0.51.0",
+    "streamlit>=1.57.0",
+    "streamlit-folium>=0.21.0",
 ]
