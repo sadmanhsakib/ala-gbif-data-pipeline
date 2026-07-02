@@ -13,6 +13,8 @@ fileWatcherType = "none"
 enableStaticServing = true
 runOnSave = false
 maxUploadSize = 1
+address = "0.0.0.0"
+port = 8501
 
 [runner]
 fastReruns = true

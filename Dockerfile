@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # Set working directory
-WORKDIR /app
+WORKDIR /src
 
 # Copy dependency files first
 COPY pyproject.toml uv.lock ./
@@ -19,10 +19,10 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --only-group run
 
 # Copy project files
-COPY /.streamlit /app/
-COPY /app /app/
-COPY /data/model /app/
-COPY /data/processed /app/
+COPY /.streamlit /src/.streamlit
+COPY /app /src/app
+COPY /data/model /src/data/model
+COPY /data/processed /src/data/processed
 
 # Expose Streamlit port
 EXPOSE 8501
@@ -31,4 +31,4 @@ EXPOSE 8501
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
 
 # Run Streamlit through uv
-CMD ["uv", "run", "streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["uv", "run", "streamlit", "run", "app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
