@@ -1,15 +1,15 @@
 """
-shap_panel.py — "Why is this segment risky?" feature-attribution panel.
+shap_panel.py: "Why is this segment risky?" feature-attribution panel.
 
 Unchanged engine, restyled output:
   • Precomputed SHAP values are loaded once (@st.cache_data) and the Matplotlib
     waterfall is rendered on the non-interactive 'Agg' backend, cached PER
-    SEGMENT — so re-selecting a segment is instant and never recomputes.
+    SEGMENT: so re-selecting a segment is instant and never recomputes.
   • The plot is recoloured into the app's risk language (orange = pushes risk
     up, green = pulls it down) and the surrounding card uses the new palette.
 
 Performance notes:
-  • Heavy libraries (shap, matplotlib, joblib) are imported lazily — only when
+  • Heavy libraries (shap, matplotlib, joblib) are imported lazily: only when
     the panel is actually rendered. This saves ~1–2 s on every page that does
     NOT display the SHAP waterfall (overview, explorer, signs, methodology).
 """
@@ -143,7 +143,7 @@ def render_shap_panel(segment_id: int | None = None) -> None:
         """
     )
 
-    # Generate the waterfall — returns None if segment has no SHAP data.
+    # Generate the waterfall: returns None if segment has no SHAP data.
     plot_bytes = generate_waterfall_plot(segment_id)
     if plot_bytes is None:
         st.warning(f"No SHAP data available for segment {segment_id}.")

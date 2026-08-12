@@ -1,5 +1,5 @@
 """
-ui.py — small interaction helpers shared across the page views.
+ui.py: small interaction helpers shared across the page views.
 
 The selection APIs (st.dataframe / st.pydeck_chart `on_select`) require recent
 Streamlit (dataframe ≥1.35, pydeck ≥1.38). Each helper degrades gracefully on
@@ -26,7 +26,7 @@ def select_row(df: pd.DataFrame, key: str, column_config: dict | None = None,
                 else getattr(sel, "rows", [])) if sel is not None else []
         return df.iloc[rows[0]] if rows else None
     except TypeError:
-        # Streamlit too old for dataframe selection — render + selectbox fallback.
+        # Streamlit too old for dataframe selection: render + selectbox fallback.
         st.dataframe(df, width='stretch', hide_index=True,
                      height=height, column_config=column_config)
         id_col = df.columns[0]

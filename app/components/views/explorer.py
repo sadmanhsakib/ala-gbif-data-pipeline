@@ -1,5 +1,5 @@
 """
-Risk Explorer — the decision-support workhorse.
+Risk Explorer: the decision-support workhorse.
 
 Narrative job: "Find the segments that need action." Filter by state, road class,
 and risk; see them on the map; rank them in a sortable table; send any one to
@@ -76,7 +76,7 @@ def render() -> None:
         f"**{min_risk:.3f}** (capped at {data.EXPLORER_MAX_SEGMENTS:,} for "
         f"performance)."
     )
-    theme.section_header("Risk map:", "Lines are coloured by risk — deeper red is "
+    theme.section_header("Risk map:", "Lines are coloured by risk: deeper red is "
                          "higher. Hover for detail; click a segment to inspect it.",
                          eyebrow="Filtered view")
     geojson = maps.segments_geojson(tuple(states), tuple(classes), min_risk)

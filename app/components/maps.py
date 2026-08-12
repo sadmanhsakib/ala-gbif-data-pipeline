@@ -1,5 +1,5 @@
 """
-maps.py — folium map builders.
+maps.py: folium map builders.
 
 Performance pattern:
   • Heavy GeoJSON view-models are built in @st.cache_data functions with
@@ -211,7 +211,7 @@ def explorer_map(geojson: dict, show_signs: bool = False) -> folium.Map:
 
 
 def signs_map(df: pd.DataFrame, geojson_data: dict) -> folium.Map:
-    """All (or state-filtered) recommended sign placements — the 'where to act' map."""
+    """All (or state-filtered) recommended sign placements: the 'where to act' map."""
     m = _base_map()
     
     _add_signs(m, geojson_data, interactive=True)

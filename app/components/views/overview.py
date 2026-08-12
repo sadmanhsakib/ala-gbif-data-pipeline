@@ -1,9 +1,9 @@
 """
-National Overview — the landing page.
+National Overview: the landing page.
 
 Narrative job: "Here is the whole road network, and here is where the danger
 concentrates." Pre-aggregated state choropleth (8 polygons) + a priority queue
-of the top hotspots. Light by design — nothing here renders the full network.
+of the top hotspots. Light by design: nothing here renders the full network.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def render() -> None:
     theme.page_hero(
         "National Overview",
         "We score every road segment in Australia for wildlife–vehicle collision "
-        "risk. This is the whole network at a glance — and where the danger "
+        "risk. This is the whole network at a glance: and where the danger "
         "concentrates, so you know where to look first.",
         eyebrow="The whole picture",
     )
@@ -31,7 +31,7 @@ def render() -> None:
         theme.metric_card("Wildlife sightings", s["sightings"],
                           "verified occurrence records", theme.BARK),
         theme.metric_card("Critical segments", f"{s['critical_segments']:,}",
-                          "risk ≥ 0.98 — act first", CRITICAL_HEX),
+                          "risk ≥ 0.98: act first", CRITICAL_HEX),
         theme.metric_card("Species covered", str(s["species"]),
                           "native Australian species", theme.SAGE),
         theme.metric_card("States & territories", str(s["states"]),
@@ -40,7 +40,7 @@ def render() -> None:
 
     theme.section_header(
         "Top 10 hotspots:",
-        "The single highest-risk segments in the country — your first places to "
+        "The single highest-risk segments in the country: your first places to "
         "act. Select any row to open its full risk analysis.",
         eyebrow="Priority queue",
     )

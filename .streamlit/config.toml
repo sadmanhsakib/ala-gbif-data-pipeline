@@ -1,4 +1,4 @@
-# Streamlit-level theme — sets the base palette/fonts so the app renders in the
+# Streamlit-level theme: sets the base palette/fonts so the app renders in the
 # right colours immediately on cold start, before style.css finishes loading.
 [theme]
 base = "light"

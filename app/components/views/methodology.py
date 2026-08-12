@@ -1,9 +1,9 @@
 """
-Methodology & Data — the trust page.
+Methodology & Data: the trust page.
 
 Narrative job: explain the hard problem, why a proxy label was necessary, how
 scores are produced, how they were validated, and the limits to keep in mind.
-Curated for a technically literate reviewer — honest caveats are a feature.
+Curated for a technically literate reviewer: honest caveats are a feature.
 """
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ from components import data, theme
 
 # ── Risk tier reference ───────────────────────────────────────────────────────
 TIER_ROWS = [
-    ("Critical", "#C02B22", "risk ≥ 0.98 — intervene first"),
-    ("High", "#E2702A", "0.90 – 0.98 — strong candidates"),
-    ("Moderate", "#E8B43A", "0.70 – 0.90 — monitor"),
-    ("Low", "#3F7A53", "below 0.70 — lower priority"),
+    ("Critical", "#C02B22", "risk ≥ 0.98: intervene first"),
+    ("High", "#E2702A", "0.90 – 0.98: strong candidates"),
+    ("Moderate", "#E8B43A", "0.70 – 0.90: monitor"),
+    ("Low", "#3F7A53", "below 0.70: lower priority"),
 ]
 
 # ── Validation metrics (from Optuna-optimised model) ──────────────────────────
@@ -40,7 +40,7 @@ def render() -> None:
 
     theme.page_hero(
         "Methodology & Data",
-        "How the risk scores are produced — and, just as importantly, what they "
+        "How the risk scores are produced: and, just as importantly, what they "
         "cannot tell you. This page documents the research design, validation "
         "strategy, and known limitations behind every number in this tool.",
         eyebrow="Why you can trust this",
@@ -53,14 +53,14 @@ def render() -> None:
     )
     st.markdown(
         "~10 million animals die on Australian roads annually, yet the most "
-        "comprehensive open citizen-science platform — iNaturalist — contains "
+        "comprehensive open citizen-science platform: iNaturalist: contains "
         "only **~15,000 confirmed roadkill observations** across 570+ species "
         "over five years. That is a detection rate of roughly **0.03%**.\n\n"
         "This sparsity is structural: roadkill events are transient, dispersed "
         "across 900,000+ km of road network, and entirely dependent on "
         "opportunistic observer presence. No national standardised roadkill "
         "monitoring programme exists in Australia. Direct supervised learning "
-        "— predicting collision counts from road and ecological features — is "
+        "— predicting collision counts from road and ecological features: is "
         "therefore **infeasible**. The ground truth does not exist at the "
         "required spatial resolution."
     )
@@ -74,16 +74,16 @@ def render() -> None:
     )
     st.markdown(
         "Three methodologically legitimate options exist:\n\n"
-        "1. **Proxy label construction** — derive a surrogate risk score from "
+        "1. **Proxy label construction**: derive a surrogate risk score from "
         "wildlife presence, road danger, and habitat quality; train a model to "
         "predict that surrogate.\n"
-        "2. **Unsupervised clustering** — group segments by feature similarity. "
+        "2. **Unsupervised clustering**: group segments by feature similarity. "
         "Produces clusters, not risk scores.\n"
-        "3. **Expert rule systems** — hard-coded thresholds. Not generalisable, "
+        "3. **Expert rule systems**: hard-coded thresholds. Not generalisable, "
         "not updatable from new data.\n\n"
         "This project uses approach 1. The proxy label is designed to be "
         "**ecologically principled**, **spatially coherent**, and **partially "
-        "non-recoverable by formula** — the three properties required for a "
+        "non-recoverable by formula**: the three properties required for a "
         "proxy label to support genuine model generalisation rather than "
         "formula memorisation."
     )
@@ -102,7 +102,7 @@ def render() -> None:
             "| Component | Weight | Rationale |\n"
             "|---|---|---|\n"
             "| Sighting count | 0.30 | Most direct observational evidence |\n"
-            "| Mean NDVI | 0.20 | Habitat quality — sustained presence |\n"
+            "| Mean NDVI | 0.20 | Habitat quality: sustained presence |\n"
             "| Species richness | 0.15 | Biodiversity breadth |\n"
             "| Peak season weight | 0.15 | Seasonal risk character |\n"
             "| Nocturnal weight | 0.10 | Visibility risk modifier |\n"
@@ -115,7 +115,7 @@ def render() -> None:
             "|---|---|---|\n"
             "| Speed limit | 0.35 | Kinetic energy at impact |\n"
             "| Proximity | 0.35 | Wildlife approach distance |\n"
-            "| Traffic proxy | 0.30 | Lower weight — imputed, not measured |"
+            "| Traffic proxy | 0.30 | Lower weight: imputed, not measured |"
         )
     st.markdown(
         "**Step 3 · Multiplicative combination:** "
@@ -123,11 +123,11 @@ def render() -> None:
         "The multiplicative form enforces a logical AND: risk is only non-zero "
         "where wildlife presence **and** road danger co-occur. An additive "
         "combination would let a high-speed motorway with no wildlife "
-        "score moderately — that does not reflect genuine collision risk.\n\n"
+        "score moderately: that does not reflect genuine collision risk.\n\n"
         "**Step 4 · Spatial lag blending + rank normalisation:**\n\n"
         "`blended_risk = 0.7 × raw_risk + 0.3 × spatial_lag(k=5)`  →  "
         "`proxy_risk = percentile_rank(blended_risk)`\n\n"
-        "The 30% spatial lag injects neighbourhood context — wildlife movement "
+        "The 30% spatial lag injects neighbourhood context: wildlife movement "
         "corridors do not respect road segment boundaries. Percentile rank "
         "removes the arbitrary magnitude of blended scores and produces a "
         "uniform [0, 1] distribution that is robust to outliers. The result "
@@ -158,19 +158,19 @@ def render() -> None:
         "different observer networks. ALA specialises in Australian citizen "
         "science; GBIF aggregates museum specimens, research surveys, and "
         "international programmes. Taking the deduplicated union achieves "
-        "greater spatial coverage than either alone — particularly for remote "
+        "greater spatial coverage than either alone: particularly for remote "
         "regions underrepresented in citizen science.\n\n"
         "**NDVI:** MODIS MOD13A3 monthly composites at 1 km resolution, "
         "median-composited across 72 months (2020–2026) to suppress fire "
         "scar artefacts and cloud contamination.\n\n"
-        "**Road network:** OpenStreetMap via GeoFabrik — the only nationally "
+        "**Road network:** OpenStreetMap via GeoFabrik: the only nationally "
         "complete, openly licensed, machine-readable road network for Australia."
     )
 
     # ── 5. Feature engineering highlights ─────────────────────────────────────
     theme.section_header(
         "What goes into a prediction?",
-        "The model blends three families of signal — plus spatial lags for "
+        "The model blends three families of signal: plus spatial lags for "
         "features where neighbourhood context carries independent predictive "
         "information.",
         eyebrow="Features",
@@ -190,7 +190,7 @@ def render() -> None:
         "**🧭 Spatial context**\n\n"
         "- Spatial lag of sighting count\n- Lagged species richness\n"
         "- Lagged NDVI & traffic proxy\n"
-        "- *Road class excluded* — its signal is already captured by "
+        "- *Road class excluded*: its signal is already captured by "
         "speed limit & traffic proxy"
     )
 
@@ -202,8 +202,8 @@ def render() -> None:
     st.markdown(
         "Every road segment is scored by a **gradient-boosted tree model "
         "(XGBoost)** optimised via 50-trial Bayesian search (Optuna, TPE "
-        "sampler). Each prediction is paired with **exact SHAP values** — "
-        "not kernel approximations — computed by traversing the tree structure."
+        "sampler). Each prediction is paired with **exact SHAP values**: "
+        "not kernel approximations: computed by traversing the tree structure."
     )
     st.markdown(
         "| Alternative | Why rejected |\n"
@@ -212,17 +212,17 @@ def render() -> None:
         "learning rate shrinkage to control overfitting on a noisy proxy label |\n"
         "| Linear Regression | Cannot capture non-linear interactions "
         "(e.g. high sightings near a slow road ≠ same count near a motorway) |\n"
-        "| Neural Network | SHAP would require kernel approximations — "
+        "| Neural Network | SHAP would require kernel approximations: "
         "per-segment attributions would be estimated, not exact. "
         "Exact SHAP is non-negotiable for the explainability panel |\n"
-        "| Gaussian Process | O(n³) complexity — infeasible for 99k segments "
+        "| Gaussian Process | O(n³) complexity: infeasible for 99k segments "
         "without sparse approximations beyond project scope |"
     )
 
     # ── 7. Validation ─────────────────────────────────────────────────────────
     theme.section_header(
         "Validation strategy:",
-        "Three complementary tests — because any single metric can be gamed "
+        "Three complementary tests: because any single metric can be gamed "
         "by spatial autocorrelation.",
         eyebrow="How we know it works",
     )
@@ -230,7 +230,7 @@ def render() -> None:
     st.markdown("##### Spatial block cross-validation")
     st.markdown(
         "Random CV is **methodologically incorrect** for spatially "
-        "autocorrelated data — a test segment 50 m from its training neighbours "
+        "autocorrelated data: a test segment 50 m from its training neighbours "
         "is not a test of generalisation. We use **jittered 50 km spatial "
         "blocks** (±15 km boundary offset per fold) so the model must predict "
         "risk in geographic regions it has never seen."
@@ -254,7 +254,7 @@ def render() -> None:
         theme.metric_card(
             "Ceiling (proxy vs sightings)",
             VALIDATION["tas_ceiling"],
-            "maximum achievable — by construction", theme.BARK),
+            "maximum achievable: by construction", theme.BARK),
         theme.metric_card(
             "Model (predicted vs sightings)",
             VALIDATION["tas_model"],
@@ -316,7 +316,7 @@ def render() -> None:
         "This distribution reflects the geographic concentration of sighting "
         "records, not the true national distribution of collision risk. "
         "Recommendations in **NSW, VIC, QLD, TAS, and ACT** are grounded in "
-        "dense training signal — **high confidence**. SA and WA are "
+        "dense training signal: **high confidence**. SA and WA are "
         "extrapolations into data-sparse regions."
     )
 
@@ -337,7 +337,7 @@ def render() -> None:
         "collision ground truth data**, which does not exist.\n"
         "- **Observation bias.** ALA and GBIF records are citizen-science "
         "observations concentrated near populated areas and roads. The model "
-        "cannot distinguish observer density from wildlife density — an "
+        "cannot distinguish observer density from wildlife density: an "
         "unresolved limitation of occurrence-based risk modelling.\n"
         "- **Imputed road attributes.** Speed limit and traffic proxy are "
         "imputed from road class for the majority of segments. Real values "
@@ -346,11 +346,11 @@ def render() -> None:
         "They will become stale as land use changes, roads are upgraded, "
         "and species distributions shift under climate change.\n"
         "- **Residual spatial autocorrelation.** Moran's I on residuals "
-        "(0.3081) indicates unobserved landscape covariates — terrain "
-        "complexity, fencing density, seasonal migration corridors — that no "
+        "(0.3081) indicates unobserved landscape covariates: terrain "
+        "complexity, fencing density, seasonal migration corridors: that no "
         "available open dataset can supply. This represents the **ceiling of "
         "what is achievable with open data at national scale**.\n"
         "- **Sign effectiveness is not modelled.** We recommend *where* signs "
-        "would target the highest-risk locations — we do **not** predict how "
+        "would target the highest-risk locations: we do **not** predict how "
         "much a sign would reduce collisions at that site."
     )

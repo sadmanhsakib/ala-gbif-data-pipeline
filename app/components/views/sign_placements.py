@@ -1,11 +1,11 @@
 """
-Sign Placements — the "what should I do about it?" page.
+Sign Placements: the "what should I do about it?" page.
 
 Narrative job: turn risk scores into action. The model flags 1,189 segments
 where a wildlife warning sign would target the highest-risk locations; this page
 maps them, breaks them down by state, and exports the list.
 
-Note: we deliberately do NOT show a modelled "risk after sign" — sign
+Note: we deliberately do NOT show a modelled "risk after sign": sign
 effectiveness is not part of the dataset (see Methodology → Limitations). We
 recommend WHERE to act, not a predicted collision reduction.
 """
@@ -23,7 +23,7 @@ def render() -> None:
     theme.page_hero(
         "Sign Placements",
         "The bottom line: 1,189 segments where a wildlife warning sign targets the "
-        "highest-risk locations. Here is exactly where — ready to map, break down, "
+        "highest-risk locations. Here is exactly where: ready to map, break down, "
         "and export.",
         eyebrow="What to do",
     )

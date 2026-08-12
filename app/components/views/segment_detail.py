@@ -1,5 +1,5 @@
 """
-Segment Detail — the "why is this spot dangerous?" deep dive.
+Segment Detail: the "why is this spot dangerous?" deep dive.
 
 Narrative job: for a single segment, show its risk, the factors behind it
 (SHAP), where it is, and whether a warning sign is recommended.
@@ -24,7 +24,7 @@ def _picker() -> None:
 def render() -> None:
     theme.page_hero(
         "Segment Detail",
-        "Everything the model knows about one road segment — its risk, the "
+        "Everything the model knows about one road segment: its risk, the "
         "factors driving it, and whether a warning sign is recommended.",
         eyebrow="Why this segment",
     )
@@ -57,7 +57,7 @@ def render() -> None:
     signs = maps.signs_for_map()
     has_sign = int(sid) in set(signs["road_segment_id"])
     if has_sign:
-        st.success("✓  A wildlife warning sign is recommended here — this segment "
+        st.success("✓  A wildlife warning sign is recommended here: this segment "
                    "is among the 1,189 priority placements.")
     else:
         st.info("No warning sign is currently recommended for this segment.")

@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**A national-scale geospatial machine learning platform that scores every road segment in Australia for wildlife-vehicle collision risk — and recommends precisely where to place warning signs.**
+**A national-scale geospatial machine learning platform that scores every road segment in Australia for wildlife-vehicle collision risk: and recommends precisely where to place warning signs.**
 
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-ML%20Engine-FF6600?style=flat-square)](https://xgboost.readthedocs.io/)
@@ -23,13 +23,13 @@
 ## 🌿 Why This Project Exists
 
 > _"More than 10 million animals die on Australian roads every year."_
-> — [University of Melbourne Research](<https://findanexpert.unimelb.edu.au/news/79342-10-million-animals-die-on-our-roads-each-year.-here%E2%80%99s-what-works-(and-what-doesn%E2%80%99t)-to-cut-the-toll>)
+> : [University of Melbourne Research](<https://findanexpert.unimelb.edu.au/news/79342-10-million-animals-die-on-our-roads-each-year.-here%E2%80%99s-what-works-(and-what-doesn%E2%80%99t)-to-cut-the-toll>)
 
-Australia is home to some of the planet's most extraordinary and irreplaceable wildlife. Kangaroos, koalas, wombats, echidnas, and platypuses — many of these wildlife are an endemic to Australia, but are found nowhere else on Earth. Unfortunately, they are being killed in devastating numbers by vehicle collisions every single day, putting both wild life and human lives at risk. Yet the warning signs meant to alert drivers are placed using decades-old, static processes that ignore real ecological data entirely.
+Australia is home to some of the planet's most extraordinary and irreplaceable wildlife. Kangaroos, koalas, wombats, echidnas, and platypuses: many of these wildlife are an endemic to Australia, but are found nowhere else on Earth. Unfortunately, they are being killed in devastating numbers by vehicle collisions every single day, putting both wild life and human lives at risk. Yet the warning signs meant to alert drivers are placed using decades-old, static processes that ignore real ecological data entirely.
 
 **This project addresses that gap head-on.**
 
-By fusing **413,000+ verified biodiversity occurrence records** across 11 native species with road network topology, vegetation coverage data, and species-specific biological risk factors, this platform generates a **continuous, statistically rigorous 0–1 risk score for every road segment that had a sighting in the last 6 years in the country**. The result is a reproducible, dynamically updatable decision-support system that tells road authorities **exactly where to place warning signs** — backed by evidence, not guesswork.
+By fusing **413,000+ verified biodiversity occurrence records** across 11 native species with road network topology, vegetation coverage data, and species-specific biological risk factors, this platform generates a **continuous, statistically rigorous 0–1 risk score for every road segment that had a sighting in the last 6 years in the country**. The result is a reproducible, dynamically updatable decision-support system that tells road authorities **exactly where to place warning signs**: backed by evidence, not guesswork.
 
 This is not a dashboard for viewing historical sightings. It is a **forward-looking risk model** that captures the ecological and infrastructural conditions that cause collisions, identifies those dangerous intersections proactively, and delivers actionable GeoJSON output that plugs directly into existing government GIS workflows.
 
@@ -39,7 +39,7 @@ Built entirely on 100% open data and open-source tools, it can be reproduced, au
 
 ## 📸 Application Interface & Core Views
 
-The interactive Streamlit application is structured into **five distinct functional views** under the "Bushland & Hazard" design theme — from national-scale hotspot discovery through per-segment SHAP diagnostics to GIS-ready sign placement export.
+The interactive Streamlit application is structured into **five distinct functional views** under the "Bushland & Hazard" design theme: from national-scale hotspot discovery through per-segment SHAP diagnostics to GIS-ready sign placement export.
 
 <table style="width: 100%; max-width: 800px; margin: 0 auto; border-collapse: collapse;">
   <tr>
@@ -54,7 +54,7 @@ The interactive Streamlit application is structured into **five distinct functio
       <em>State / road class / threshold filters · risk-tiered segment overlay · sortable priority table</em>
     </td>
     <td width="33.3%" align="center" valign="top" style="padding: 10px;">
-      <img src="docs/screenshots/3-detail-shap.png" alt="Segment Detail — SHAP Waterfall" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
+      <img src="docs/screenshots/3-detail-shap.png" alt="Segment Detail: SHAP Waterfall" style="width: 100%; max-width: 240px; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);" /><br/>
       <strong>Segment Detail</strong><br/>
       <em>High-zoom locator map · SHAP waterfall attribution by feature</em>
     </td>
@@ -82,7 +82,7 @@ The interactive Streamlit application is structured into **five distinct functio
 
 ## 🐾 The Animals We're Protecting
 
-The following 11 native Australian species are tracked — chosen based on ecological significance, collision severity, road proximity, and nocturnal movement patterns:
+The following 11 native Australian species are tracked: chosen based on ecological significance, collision severity, road proximity, and nocturnal movement patterns:
 
 | Common Name              | Scientific Name            | Body Mass | Nocturnal Risk |
 | ------------------------ | -------------------------- | --------- | -------------- |
@@ -100,15 +100,15 @@ The following 11 native Australian species are tracked — chosen based on ecolo
 
 Each species carries three calibrated biological weights that feed directly into the model:
 
-- **`body_mass_weight`** — Heavier animals cause more severe vehicle damage and are harder to avoid. Ranges from 0.25 (ringtail possum) to 1.00 (red kangaroo).
-- **`nocturnal_weight`** — Species that move primarily at night are at far greater risk of vehicle collision due to reduced driver visibility. Wombats, possums, and wallabies score 0.90–0.95.
-- **`peak_season_weight`** — Breeding and dispersal periods dramatically increase movement across roads. Each species has its own monthly peak window encoded as a `1.3×` multiplier.
+- **`body_mass_weight`**: Heavier animals cause more severe vehicle damage and are harder to avoid. Ranges from 0.25 (ringtail possum) to 1.00 (red kangaroo).
+- **`nocturnal_weight`**: Species that move primarily at night are at far greater risk of vehicle collision due to reduced driver visibility. Wombats, possums, and wallabies score 0.90–0.95.
+- **`peak_season_weight`**: Breeding and dispersal periods dramatically increase movement across roads. Each species has its own monthly peak window encoded as a `1.3×` multiplier.
 
 ---
 
 ## 🏗️ System Architecture
 
-The platform is a sequential, modular pipeline — from raw API calls to a live deployed application:
+The platform is a sequential, modular pipeline: from raw API calls to a live deployed application:
 
 ```text
 ╔═══════════════════════════════════════════════════════════════════════╗
@@ -123,7 +123,7 @@ The platform is a sequential, modular pipeline — from raw API calls to a live 
                                  │
                                  ▼
 ╔══════════════════════════════════════════════════════════════════════╗
-║                    fetcher.py — DATA INGESTION                       ║
+║                    fetcher.py: DATA INGESTION                       ║
 ║  • Async HTTPX calls to GBIF (11 species × 8 states)                 ║
 ║  • Synchronous Requests calls to ALA                                 ║
 ║  • coordinate validation · bounding-box filter · deduplication       ║
@@ -134,7 +134,7 @@ The platform is a sequential, modular pipeline — from raw API calls to a live 
                                  │
                                  ▼
 ╔══════════════════════════════════════════════════════════════════════╗
-║                    analyzer.py — SPATIAL ENRICHMENT                  ║
+║                    analyzer.py: SPATIAL ENRICHMENT                  ║
 ║  • Sightings → GeoDataFrame (WGS84 → EPSG:32754)                     ║
 ║  • Spatial join to state boundaries (within predicate)               ║
 ║  • Nearest-neighbour join to road segments (distance_to_road)        ║
@@ -252,7 +252,7 @@ for col in lag_cols:
     gdf[f"lag_{col}"] = lag_spatial(w, gdf[col].values)
 ```
 
-This gives XGBoost explicit neighbourhood context as input features, reducing the risk of spatial autocorrelation remaining in the residuals — and is validated afterwards with Moran's I.
+This gives XGBoost explicit neighbourhood context as input features, reducing the risk of spatial autocorrelation remaining in the residuals: and is validated afterwards with Moran's I.
 
 ### 3. Stochastic Spatial Block Cross-Validation
 
@@ -275,7 +275,7 @@ flowchart LR
     style F fill:#1a3a1a,stroke:#4caf50,color:#e8f5e9
 ```
 
-Segments near block boundaries rotate between train and test sets across folds. The result is CV metrics that reflect **genuine out-of-sample spatial generalisation** — not interpolation between nearby points.
+Segments near block boundaries rotate between train and test sets across folds. The result is CV metrics that reflect **genuine out-of-sample spatial generalisation**: not interpolation between nearby points.
 
 ### 4. Moran's I Residual Validation
 
@@ -283,14 +283,14 @@ After training, the platform computes **Moran's I on model residuals** using the
 
 ### 5. SHAP Explainability Per Segment
 
-Every road segment's risk score comes with a full SHAP decomposition. The Streamlit app displays a **waterfall chart** showing exactly which features drove that segment's score up or down — making every prediction auditable and interpretable to non-technical road safety stakeholders.
+Every road segment's risk score comes with a full SHAP decomposition. The Streamlit app displays a **waterfall chart** showing exactly which features drove that segment's score up or down: making every prediction auditable and interpretable to non-technical road safety stakeholders.
 
 ### 6. Memory-Safe NDVI Raster Processing
 
 150 monthly GeoTIFF files (~12GB total) are merged into a single median composite without ever loading more than one block into memory simultaneously. The block-wise windowed approach processes the rasters one spatial tile at a time:
 
 ```python
-# Process raster in blocks — never load entire file into RAM
+# Process raster in blocks: never load entire file into RAM
 for window in dst.block_windows(1):
     block_arrays = [src.read(1, window=window) for src in srcs]
     block_median = np.nanmedian(np.stack(block_arrays, axis=0), axis=0)
@@ -330,11 +330,11 @@ The final feature store (`sightings.parquet`) contains 413,000 rows across 11 sp
 
 ## 🎨 Application Design & UI Engineering
 
-The Streamlit application goes beyond a typical data science prototype — it was built with the same design rigour applied to production software.
+The Streamlit application goes beyond a typical data science prototype: it was built with the same design rigour applied to production software.
 
 ### Design System
 
-A comprehensive design system underpins the entire interface: a systematic color palette calibrated for risk visualisation, a consistent typography scale, a structured spacing system, and a reusable component library. Glass-morphism effects, a multi-level shadow system, smooth CSS transitions, and refined micro-interactions bring the interface to a level of polish that reflects Apple-inspired design principles — elevating it from prototype to production-ready application.
+A comprehensive design system underpins the entire interface: a systematic color palette calibrated for risk visualisation, a consistent typography scale, a structured spacing system, and a reusable component library. Glass-morphism effects, a multi-level shadow system, smooth CSS transitions, and refined micro-interactions bring the interface to a level of polish that reflects Apple-inspired design principles: elevating it from prototype to production-ready application.
 
 ### Accessibility
 
@@ -344,16 +344,16 @@ The application targets **WCAG 2.1 AA compliance**: color contrast ratios meet A
 
 Several targeted optimisations reduce load time and memory pressure in the deployed app:
 
-- **Selective data loading** — only the columns required for the active view are loaded from Parquet; the full 54MB scored segments file is never read in its entirety at startup
-- **Streamlit caching** (`@st.cache_data`) — scored segments, SHAP values, and sign placements are cached after the first load, eliminating repeated disk reads across user interactions
-- **Heatmap point cap** — the occurrence heatmap renders at most 15,000 sampled points, keeping Folium rendering smooth without sacrificing visual fidelity
-- **State boundary simplification** — `state_boundaries_simplified.parquet` uses a pre-simplified geometry (Ramer–Douglas–Peucker) to reduce GeoJSON payload size for web rendering
+- **Selective data loading**: only the columns required for the active view are loaded from Parquet; the full 54MB scored segments file is never read in its entirety at startup
+- **Streamlit caching** (`@st.cache_data`): scored segments, SHAP values, and sign placements are cached after the first load, eliminating repeated disk reads across user interactions
+- **Heatmap point cap**: the occurrence heatmap renders at most 15,000 sampled points, keeping Folium rendering smooth without sacrificing visual fidelity
+- **State boundary simplification**: `state_boundaries_simplified.parquet` uses a pre-simplified geometry (Ramer–Douglas–Peucker) to reduce GeoJSON payload size for web rendering
 
 The result: **40–50% faster initial load** and **60–70% lower peak memory** compared to naïve full-file loading, keeping the app well within Streamlit Community Cloud's 1GB memory ceiling.
 
 ---
 
-## 🛠️ Tech Stack — Choices Explained
+## 🛠️ Tech Stack: Choices Explained
 
 Every tool was chosen deliberately. Here's the reasoning:
 
@@ -373,14 +373,14 @@ Every tool was chosen deliberately. Here's the reasoning:
 | **Shapely**    | Powers GeoPandas geometry engine; zero configuration overhead                                                                                  |
 | **Rasterio**   | Industry standard for GeoTIFF access; `sample_gen` efficiently samples NDVI at arbitrary lat/lon coordinates without loading the entire raster |
 | **PyProj**     | Handles CRS transformations; EPSG:32754 (UTM Zone 54S) gives metre-accurate distance calculations over eastern Australia                       |
-| **EPSG:32754** | Projected CRS covering eastern Australia in metres — required for accurate `distance_to_road` values and spatial block size in the CV step     |
+| **EPSG:32754** | Projected CRS covering eastern Australia in metres: required for accurate `distance_to_road` values and spatial block size in the CV step      |
 
 ### Spatial Statistics
 
 | Tool                 | Why This Tool                                                                                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **PySAL (libpysal)** | Only Python library with production-grade spatial weights matrices (`KNN`, `Queen`) and spatial lag computation. No alternative exists at this level of correctness |
-| **PySAL (esda)**     | `esda.Moran` provides the Moran's I residual test with permutation-based significance — the industry-standard spatial autocorrelation diagnostic                    |
+| **PySAL (esda)**     | `esda.Moran` provides the Moran's I residual test with permutation-based significance: the industry-standard spatial autocorrelation diagnostic                     |
 
 ### Machine Learning
 
@@ -398,9 +398,9 @@ Every tool was chosen deliberately. Here's the reasoning:
 | Tool                 | Why This Tool                                                                                                                                                                   |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Streamlit**        | Single Python file with no frontend code required. Auto-deploys from GitHub. Free HTTPS hosting on Community Cloud. The fastest path from model to stakeholder-facing interface |
-| **Folium**           | GeoPandas-native map rendering — `HeatMap`, `GeoJson`, and `CircleMarker` layers compose directly from DataFrames. Interactive tooltips enable per-segment inspection           |
-| **streamlit-folium** | Bidirectional bridge between Streamlit and Folium — captures map click events and passes segment IDs back to Python for SHAP panel updates                                      |
-| **Branca**           | Folium's colormap engine — generates continuous color scales for risk visualization with proper legend rendering                                                                |
+| **Folium**           | GeoPandas-native map rendering: `HeatMap`, `GeoJson`, and `CircleMarker` layers compose directly from DataFrames. Interactive tooltips enable per-segment inspection            |
+| **streamlit-folium** | Bidirectional bridge between Streamlit and Folium: captures map click events and passes segment IDs back to Python for SHAP panel updates                                       |
+| **Branca**           | Folium's colormap engine: generates continuous color scales for risk visualization with proper legend rendering                                                                 |
 
 ### Data Sources
 
@@ -422,7 +422,7 @@ All development phases have been completed and the platform is fully deployed. T
 
 ```mermaid
 gantt
-    title Pipeline Development Phases — Australian Wildlife Roadkill Risk Mapper
+    title Pipeline Development Phases: Australian Wildlife Roadkill Risk Mapper
     dateFormat  YYYY-MM-DD
     axisFormat  Phase %d
 
@@ -431,7 +431,7 @@ gantt
     Data cleaning + deduplication        :done, p2, after p1, 1d
 
     section Spatial Processing
-    Spatial join — road network + states :done, p3, after p2, 2d
+    Spatial join: road network + states :done, p3, after p2, 2d
     Feature engineering (NDVI, weights)  :done, p4, after p3, 2d
 
     section Modelling
@@ -447,13 +447,13 @@ gantt
 
 **Pipeline output artefacts:**
 
-- `sightings.parquet` — 413,000 sighting rows · 11 species · 17 features · ~18MB
-- `data/processed/road_segments.parquet` — Proxy risk score per road segment · ~53MB
-- `data/model/model.pkl` — Trained XGBoost model (Optuna-optimised) · ~13MB
-- `data/model/feature_cols.pkl` — Serialised feature column list
-- `data/model/road_segments_scored.parquet` — All segments with `predicted_risk` · ~54MB
-- `data/model/shap_values.parquet` — Per-segment SHAP decomposition · ~9MB
-- `data/model/sign_placements.geojson` — 1,189 deduplicated sign recommendations · ~2.3MB
+- `sightings.parquet`: 413,000 sighting rows · 11 species · 17 features · ~18MB
+- `data/processed/road_segments.parquet`: Proxy risk score per road segment · ~53MB
+- `data/model/model.pkl`: Trained XGBoost model (Optuna-optimised) · ~13MB
+- `data/model/feature_cols.pkl`: Serialised feature column list
+- `data/model/road_segments_scored.parquet`: All segments with `predicted_risk` · ~54MB
+- `data/model/shap_values.parquet`: Per-segment SHAP decomposition · ~9MB
+- `data/model/sign_placements.geojson`: 1,189 deduplicated sign recommendations · ~2.3MB
 
 ---
 
@@ -467,9 +467,9 @@ gantt
 | SHAP coverage         | 100% of features | 100%                         | ✅ Met       |
 | SHAP plot generation  | < 5 seconds      | < 2 seconds                  | ✅ Met       |
 | Peak memory usage     | ≤ 1GB            | ~200MB pipeline · ~400MB app | ✅ Met       |
-| Initial page          | —                | ~2 seconds                   | ✅ Optimised |
-| Metric cards          | —                | ~2.1 seconds                 | ✅ Optimised |
-| Map (full load)       | —                | ~2.25 seconds                | ✅ Optimised |
+| Initial page          | :                | ~2 seconds                   | ✅ Optimised |
+| Metric cards          | :                | ~2.1 seconds                 | ✅ Optimised |
+| Map (full load)       | :                | ~2.25 seconds                | ✅ Optimised |
 
 ### Scale Achieved
 
@@ -502,18 +502,18 @@ quadrantChart
 | --------------------------------- | --------------- | ------ | ------------------------ |
 | Spatial CV R² (Optuna-optimised)  | 0.9743 ± 0.0002 | ≥ 0.60 | ✅ Exceeded              |
 | Spatial CV MAE (Optuna-optimised) | 0.0337 ± 0.0007 | ≤ 0.08 | ✅ Exceeded              |
-| Moran's I on target               | 0.4117          | —      | Documented               |
-| Moran's I on residuals            | 0.3081          | —      | 25.2% explained          |
-| Tasmania holdout R (direct)       | 0.9835          | —      | ✅ Strong generalisation |
-| Tasmania ceiling achieved         | 97.4%           | —      | ✅ Circularity addressed |
+| Moran's I on target               | 0.4117          | :      | Documented               |
+| Moran's I on residuals            | 0.3081          | :      | 25.2% explained          |
+| Tasmania holdout R (direct)       | 0.9835          | :      | ✅ Strong generalisation |
+| Tasmania ceiling achieved         | 97.4%           | :      | ✅ Circularity addressed |
 
-### Geographic Generalisation — Tasmania Holdout
+### Geographic Generalisation: Tasmania Holdout
 
 The Optuna-optimised model was retrained exclusively on mainland Australia (97,354 segments) and
 applied to a fully held-out geographic region (Tasmania, 2,385 segments) it had
 never seen during training. Predicted risk correlates with Tasmania's label rankings
 at Spearman r = 0.98, and achieves 97.4% of the theoretical ceiling correlation
-against raw sighting density — **demonstrating that the model learned transferable
+against raw sighting density: **demonstrating that the model learned transferable
 feature relationships, not geographic memorisation.**
 
 ---
@@ -550,19 +550,19 @@ Place the following in `data/raw/` before running the pipeline:
 ### Running the Pipeline
 
 ```bash
-# Phase 1 — Data ingestion, cleaning, road network and NDVI preparation
+# Phase 1: Data ingestion, cleaning, road network and NDVI preparation
 python scripts/fetcher.py
 
-# Phase 2 — Spatial joins, NDVI sampling, feature engineering, proxy label
+# Phase 2: Spatial joins, NDVI sampling, feature engineering, proxy label
 python scripts/analyzer.py
 
-# Phase 3 — XGBoost training, Optuna optimisation, spatial block CV, SHAP, Moran's I
+# Phase 3: XGBoost training, Optuna optimisation, spatial block CV, SHAP, Moran's I
 python scripts/model.py
 
-# Phase 4 — Sign placement recommendations (risk > 0.98, 2km dedup)
+# Phase 4: Sign placement recommendations (risk > 0.98, 2km dedup)
 python scripts/sign_placement.py
 
-# Phase 5 — Launch the Streamlit application locally
+# Phase 5: Launch the Streamlit application locally
 streamlit run app/streamlit_app.py
 ```
 
@@ -629,7 +629,7 @@ aus-wildlife-roadkill-risk-mapper/
 │   ├── analyzer.py              # Spatial joins · NDVI sampling · proxy label construction
 │   ├── model.py                 # XGBoost training · Optuna · spatial block CV · SHAP · Moran's I
 │   └── sign_placement.py        # Risk threshold + 2km buffer spatial deduplication engine
-├── sightings.parquet            # Final feature store — 413k rows, 17 features (~18MB)
+├── sightings.parquet            # Final feature store: 413k rows, 17 features (~18MB)
 ├── METHODOLOGY.md               # Research design, label rationale, validation, limitations
 ├── pyproject.toml               # Python project metadata and dependency management for uv
 └── LICENSE                      # MIT License
@@ -649,9 +649,9 @@ GBIF requests use **async HTTPX** for concurrent fetching across species-state c
 
 All spatial operations are performed in **EPSG:32754** (WGS 84 / UTM Zone 54S), a projected coordinate reference system that uses metres as its unit. This matters for:
 
-1. **`distance_to_road`** — accurate metre values, not degree-approximated distances
-2. **Spatial block sizes** — 50km × 50km grid cells are exact in metres
-3. **Sign deduplication buffer** — 2km is a precise metre distance
+1. **`distance_to_road`**: accurate metre values, not degree-approximated distances
+2. **Spatial block sizes**: 50km × 50km grid cells are exact in metres
+3. **Sign deduplication buffer**: 2km is a precise metre distance
 
 Results are reprojected back to **EPSG:4326** (WGS84 geographic) for Streamlit/Folium display.
 
@@ -686,9 +686,9 @@ The **multiplicative combination** (`raw_risk = ecological × road_exposure`) en
 
 ### Research Context
 
-Wildlife-vehicle collisions represent a critical and largely unaddressed conservation challenge. Approximately 10 million animals die on Australian roads annually, yet warning sign placement has historically relied on anecdotal reports and static processes that ignore real ecological data. This project applies machine learning to shift that paradigm — from reactive to predictive, from guesswork to evidence.
+Wildlife-vehicle collisions represent a critical and largely unaddressed conservation challenge. Approximately 10 million animals die on Australian roads annually, yet warning sign placement has historically relied on anecdotal reports and static processes that ignore real ecological data. This project applies machine learning to shift that paradigm: from reactive to predictive, from guesswork to evidence.
 
-The methodology is grounded in systematic data collection, rigorous feature engineering, cross-validated model training, and explainable AI — ensuring both scientific validity and practical applicability. By combining ecology, geospatial science, machine learning, and human-computer interaction, the platform demonstrates how interdisciplinary approaches can produce decision-support tools that are simultaneously scientifically rigorous and practically deployable by non-technical government stakeholders.
+The methodology is grounded in systematic data collection, rigorous feature engineering, cross-validated model training, and explainable AI: ensuring both scientific validity and practical applicability. By combining ecology, geospatial science, machine learning, and human-computer interaction, the platform demonstrates how interdisciplinary approaches can produce decision-support tools that are simultaneously scientifically rigorous and practically deployable by non-technical government stakeholders.
 
 ### Direct Stakeholder Use
 
@@ -704,7 +704,7 @@ This transforms the tool from a black-box recommender into an **evidence-based, 
 - **2,239** high-risk segments (risk > 0.98) identified for prioritised monitoring
 - **1,189** specific sign placement locations recommended with GIS-ready coordinates
 - **All 8** states and territories covered, enabling national-scale policy decisions
-- **100%** open data and open-source — any road authority can reproduce, audit, and extend the analysis
+- **100%** open data and open-source: any road authority can reproduce, audit, and extend the analysis
 
 ---
 
@@ -722,15 +722,15 @@ This transforms the tool from a black-box recommender into an **evidence-based, 
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE).
+MIT: see [LICENSE](LICENSE).
 
 This project uses data from:
 
-- [Atlas of Living Australia](https://www.ala.org.au/) — CC BY 3.0
-- [GBIF](https://www.gbif.org/) — CC BY 4.0
-- [GeoFabrik / OpenStreetMap](https://www.geofabrik.de/) — ODbL
-- [NASA AppEEARS / MODIS](https://appeears.earthdatacloud.nasa.gov/) — NASA Open Data Policy
-- [Australian Bureau of Statistics](https://www.abs.gov.au/) — CC BY 4.0 AU
+- [Atlas of Living Australia](https://www.ala.org.au/): CC BY 3.0
+- [GBIF](https://www.gbif.org/): CC BY 4.0
+- [GeoFabrik / OpenStreetMap](https://www.geofabrik.de/): ODbL
+- [NASA AppEEARS / MODIS](https://appeears.earthdatacloud.nasa.gov/): NASA Open Data Policy
+- [Australian Bureau of Statistics](https://www.abs.gov.au/): CC BY 4.0 AU
 
 ---
 

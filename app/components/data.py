@@ -1,5 +1,5 @@
 """
-data.py — Cached data-access layer.
+data.py: Cached data-access layer.
 
 Every disk read lives here behind Streamlit's caching decorators, so the heavy
 GeoParquet / GeoJSON loads happen ONCE per session and are reused on every
@@ -59,7 +59,7 @@ def load_segments() -> gpd.GeoDataFrame:
 
 @st.cache_data(show_spinner=False)
 def load_boundaries() -> gpd.GeoDataFrame:
-    """Pre-simplified state polygons (only 8 features — very light)."""
+    """Pre-simplified state polygons (only 8 features: very light)."""
     gdf = gpd.read_parquet(BOUNDARIES_PATH)
     if gdf.crs is None or gdf.crs.to_epsg() != 4326:
         gdf = gdf.to_crs(epsg=4326)
@@ -150,7 +150,7 @@ def state_stats() -> pd.DataFrame:
 
 @st.cache_data(show_spinner=False)
 def top_hotspots(n: int = 10) -> pd.DataFrame:
-    """Highest-risk segments nationally — the overview leaderboard."""
+    """Highest-risk segments nationally: the overview leaderboard."""
     return segment_table().nlargest(n, "predicted_risk").reset_index(drop=True)
 
 

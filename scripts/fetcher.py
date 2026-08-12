@@ -47,7 +47,7 @@ PLATYPUS_SCIENTIFIC_NAME = "Ornithorhynchus anatinus"
 GBIF_URL = "https://api.gbif.org/v1/occurrence/search"
 ALA_URL = "https://biocache-ws.ala.org.au/ws/occurrences/search"
 
-# Canonical state list — downstream filters and map labels expect these eight
+# Canonical state list: downstream filters and map labels expect these eight
 # jurisdictions; the ABS SA1 shapefile includes extra areas we deliberately omit.
 STATE_CODES = {
     "New South Wales": "NSW",
@@ -176,7 +176,7 @@ async def get_gbif_data(species_key: int, state: str) -> str:
                 print(response.text)
                 return 1
 
-        # One pause after each species/state query — enough to stay under GBIF's fair-use threshold.
+        # One pause after each species/state query: enough to stay under GBIF's fair-use threshold.
         await asyncio.sleep(1.0)
 
     if results:
@@ -184,7 +184,7 @@ async def get_gbif_data(species_key: int, state: str) -> str:
             f"{results[0]['species'].lower().replace(' ', '_')}_sightings_gbif.csv"
         )
         df = pd.DataFrame(results)[
-            # Subset at export — raw API payloads carry dozens of unused metadata fields.
+            # Subset at export: raw API payloads carry dozens of unused metadata fields.
             ["species", "month", "year", "decimalLatitude", "decimalLongitude"]
         ]
         df.to_csv(file_name, index=False)
@@ -218,7 +218,7 @@ def get_ala_data(species_scientific_name: str, state: str) -> str:
                 "year:[2020 TO 2026]",
                 f"stateProvince:{state}",
             ],
-            "pageSize": 1000,  # ALA maximum — fewer round trips than GBIF's smaller pages
+            "pageSize": 1000,  # ALA maximum: fewer round trips than GBIF's smaller pages
             "startIndex": offset,
             # Field list keeps payloads small; we only need columns the risk model consumes.
             "fl": "scientificName,month,year,decimalLatitude,decimalLongitude",
@@ -238,7 +238,7 @@ def get_ala_data(species_scientific_name: str, state: str) -> str:
                     break
                 offset += 1000
             except (KeyError, TypeError):
-                # ALA occasionally returns partial JSON on timeout — bail rather than loop forever.
+                # ALA occasionally returns partial JSON on timeout: bail rather than loop forever.
                 break
         else:
             print(f"❌ Error: {response.status_code}")
@@ -311,7 +311,7 @@ def clean_DataFrame(file_name: str):
     df = df.drop(df[df["longitude"] < 113].index)
     df = df.drop(df[df["longitude"] > 154].index)
 
-    # Same sighting can appear in both GBIF and ALA — dedupe before spatial aggregation.
+    # Same sighting can appear in both GBIF and ALA: dedupe before spatial aggregation.
     df = df.drop_duplicates(subset=["latitude", "longitude", "year", "month"])
 
     df.to_csv(f"{file_name}", index=False)
@@ -353,7 +353,7 @@ def merge(new_file_name: str, file_names: list, shouldDelete=False, has_geometry
         subset=["species", "month", "year", "latitude", "longitude"]
     )
 
-    # Per-state/per-source CSVs are throwaway once consolidated — keeps data/ tidy.
+    # Per-state/per-source CSVs are throwaway once consolidated: keeps data/ tidy.
     if shouldDelete:
         for file_name in file_names:
             os.remove(file_name)
@@ -428,7 +428,7 @@ def enrich(path: str):
         df["body_mass_weight"] = df["species"].map(BODY_MASS_WEIGHT)
         df["nocturnal_weight"] = df["species"].map(NOCTURNAL)
 
-        # 1.3× boost during peak activity months — modest uplift, not a hard filter.
+        # 1.3× boost during peak activity months: modest uplift, not a hard filter.
         df["peak_season_weight"] = [
             1.3 if m in PEAK_SEASON_MAP.get(s, []) else 1.0
             for s, m in zip(df["species"], df["month"])
@@ -469,7 +469,7 @@ def prepare_road_network():
         "residential": (50, 0.2),
     }
 
-    # Exclude footpaths, cycleways, etc. — no meaningful vehicle-wildlife collision risk.
+    # Exclude footpaths, cycleways, etc.: no meaningful vehicle-wildlife collision risk.
     road_networks_gdf = road_networks_gdf[road_networks_gdf["fclass"].isin(FCLASS_DEFAULTS.keys())]
     road_networks_gdf["speed_zone"] = road_networks_gdf["fclass"].map(
         lambda x: FCLASS_DEFAULTS[x][0]
@@ -505,7 +505,7 @@ def prepare_state_boundaries():
         "data/raw/SA1_2021_AUST_GDA2020.shp", columns=["STE_NAME21", "geometry"]
     )
 
-    # Keep only the eight mapped jurisdictions — matches STATE_CODES and map UI filters
+    # Keep only the eight mapped jurisdictions: matches STATE_CODES and map UI filters
     state_boundaries = state_boundaries[
         state_boundaries["STE_NAME21"].isin(STATE_CODES.keys())
     ]
@@ -543,7 +543,7 @@ def build_ndvi_median_composite():
     Generates a single long-term median NDVI raster from monthly AppEEARS GeoTIFFs.
 
     Uses block-wise (windowed) I/O to process rasters without loading full arrays
-    into memory — essential for continent-scale vegetation datasets.
+    into memory: essential for continent-scale vegetation datasets.
 
     Processing steps per block:
     - Reads the same spatial window from every monthly source file.

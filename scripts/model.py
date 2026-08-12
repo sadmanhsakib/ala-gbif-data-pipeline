@@ -296,7 +296,7 @@ def optimize_hyperparameters(
     )
     study.optimize(objective, n_trials=n_trials, show_progress_bar=True)
 
-    print(f"\nOptuna search complete — {n_trials} trials")
+    print(f"\nOptuna search complete: {n_trials} trials")
     print(f"  Best CV R² : {study.best_value:.4f}")
     print(f"  Best params: {study.best_params}")
 
@@ -430,7 +430,7 @@ def validate_geographic_holdout(
     train_gdf = add_spatial_lag_features(train_gdf, cols=lag_cols)
     holdout_gdf = add_spatial_lag_features(holdout_gdf, cols=lag_cols)
 
-    print(f"\nGeographic holdout validation — {holdout_state}")
+    print(f"\nGeographic holdout validation: {holdout_state}")
     print(f"  Train segments : {len(train_gdf)}")
     print(f"  Holdout segments: {len(holdout_gdf)}")
 
@@ -520,7 +520,7 @@ def compute_shap(
     # Save SHAP values for downstream analysis or visualisation
     shap_df.to_parquet("data/model/shap_values.parquet", index=False)
 
-    print(f"SHAP values saved — shape: {shap_df.shape}")
+    print(f"SHAP values saved: shape: {shap_df.shape}")
     return shap_df
 
 
@@ -547,7 +547,7 @@ def score_all_segments(
     # Save the final scored dataset
     gdf.to_parquet("data/model/road_segments_scored.parquet", index=False)
     
-    print(f"Scored parquet saved — {len(gdf)} segments")
+    print(f"Scored parquet saved: {len(gdf)} segments")
     return gdf
 
 

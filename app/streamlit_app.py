@@ -1,5 +1,5 @@
 """
-streamlit_app.py — entry point & multipage shell.
+streamlit_app.py: entry point & multipage shell.
 
 Wires the five views into a branded sidebar navigation and renders the shared
 chrome (global CSS, brand lockup, footer) once around every page. Run with:

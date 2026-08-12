@@ -1,10 +1,10 @@
 """
-theme.py — Design tokens + reusable UI fragments for the "Bushland & Hazard"
+theme.py: Design tokens + reusable UI fragments for the "Bushland & Hazard"
 visual system used across the Wildlife Collision Risk platform.
 
 This module is deliberately light: palette constants, the shared *risk colour
 language*, and small HTML builders so every page speaks the same visual
-language. It performs NO disk access — data.py imports it purely for colour
+language. It performs NO disk access: data.py imports it purely for colour
 mapping, which avoids a circular dependency (theme never imports data).
 
 Design intent (per brief):
@@ -21,7 +21,7 @@ import streamlit as st
 # ── Brand / earth palette ─────────────────────────────────────────────────────
 PAPER = "#F6F4EE"      # warm field-guide canvas (not stark white)
 SURFACE = "#FFFFFF"    # cards / panels
-EUCALYPT = "#243B2E"   # primary brand — nav, headers
+EUCALYPT = "#243B2E"   # primary brand: nav, headers
 EUCALYPT_2 = "#33503F"
 SAGE = "#5A7A5E"       # secondary green accent
 BARK = "#6F5439"       # earth brown
@@ -34,13 +34,13 @@ BORDER = "#E5E0D5"     # warm hairline
 # ── Risk colour language ──────────────────────────────────────────────────────
 # Continuous ramp stops: (position 0–1, hex, rgb). Reserved for risk only.
 RISK_STOPS = [
-    (0.00, "#3F7A53", (63, 122, 83)),    # low      — green
-    (0.45, "#E8B43A", (232, 180, 58)),   # moderate — amber
-    (0.75, "#E2702A", (226, 112, 42)),   # high     — orange
-    (1.00, "#C02B22", (192, 43, 34)),    # critical — red
+    (0.00, "#3F7A53", (63, 122, 83)),    # low     : green
+    (0.45, "#E8B43A", (232, 180, 58)),   # moderate: amber
+    (0.75, "#E2702A", (226, 112, 42)),   # high    : orange
+    (1.00, "#C02B22", (192, 43, 34)),    # critical: red
 ]
 
-# Categorical tiers: (min_score, label, hex, rgb). Thresholds are tunable — the
+# Categorical tiers: (min_score, label, hex, rgb). Thresholds are tunable: the
 # 0.98 "critical" cut mirrors the model's original HIGHRISK_THRESHOLD.
 TIERS = [
     (0.98, "Critical", "#C02B22", [192, 43, 34]),
@@ -98,7 +98,7 @@ def _css(path: str = "app/assets/style.css") -> str:
 
 
 def inject_css() -> None:
-    """Inject the global stylesheet. Cheap on reruns — the file read is cached."""
+    """Inject the global stylesheet. Cheap on reruns: the file read is cached."""
     st.html(_css())
 
 
@@ -144,7 +144,7 @@ def section_header(title: str, desc: str = "", eyebrow: str = "") -> None:
 
 
 def risk_chip(score: float) -> str:
-    """Inline pill (HTML string) — colour-coded by tier. Use inside st.html blocks."""
+    """Inline pill (HTML string): colour-coded by tier. Use inside st.html blocks."""
     label, hexc, _ = risk_tier(score)
     return f'<span class="rw-chip" style="--chip:{hexc}">{label} · {score:.3f}</span>'
 
@@ -163,7 +163,7 @@ def metric_card(label: str, value: str, sub: str = "", accent: str = INK) -> str
 def render_metric_band(cards: list[str]) -> None:
     """Render a responsive grid of metric cards in a single HTML block.
 
-    NOTE: one st.html call instead of N st.columns/st.metric widgets — fewer
+    NOTE: one st.html call instead of N st.columns/st.metric widgets: fewer
     DOM nodes and no per-card Streamlit overhead, which matters on cold starts.
     """
     st.html('<div class="rw-metric-band">' + "".join(cards) + "</div>")
@@ -174,7 +174,7 @@ def footer() -> None:
         """
         <div class="rw-footer">
           <span><strong>Australian Wildlife Roadkill Risk Mapper</strong>
-          — a decision-support tool for road safety &amp; wildlife conservation.</span>
+         : a decision-support tool for road safety &amp; wildlife conservation.</span>
           <a class="rw-footer-link"
              href="https://github.com/sadmanhsakib/aus-wildlife-roadkill-risk-mapper"
              target="_blank" rel="noopener">View on GitHub →</a>

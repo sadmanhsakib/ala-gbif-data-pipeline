@@ -18,7 +18,7 @@ from rasterio.sample import sample_gen
 import fetcher
 
 
-# Stable column names — raw parquet files from fetcher always use these fields.
+# Stable column names: raw parquet files from fetcher always use these fields.
 LATITUDE_COLUMN = "latitude"
 LONGITUDE_COLUMN = "longitude"
 
@@ -37,7 +37,7 @@ def main():
             sightings_gdf.to_parquet(f"sightings/{filename}", index=False)
             print(f"✅ sightings/{filename} processed successfully.\n")
 
-    # One national table — the risk model aggregates at road-segment level, not per species file.
+    # One national table: the risk model aggregates at road-segment level, not per species file.
     fetcher.merge(
         "sightings.parquet",
         [f"sightings/{f}" for f in os.listdir("sightings/")],
@@ -65,7 +65,7 @@ def prepare_spatial_data(df: pd.DataFrame) -> gpd.GeoDataFrame:
         geometry=gpd.points_from_xy(df[LONGITUDE_COLUMN], df[LATITUDE_COLUMN]),
         crs="EPSG:4326",
     )
-    # MGA Zone 54 gives metric distances — required for meaningful nearest-road joins.
+    # MGA Zone 54 gives metric distances: required for meaningful nearest-road joins.
     sightings_projected_gdf = sightings_projected_gdf.to_crs(epsg=32754)
 
     print("⏳ Loading state boundary data....")
@@ -77,7 +77,7 @@ def prepare_spatial_data(df: pd.DataFrame) -> gpd.GeoDataFrame:
         "data/processed/road_networks.parquet"
     ).to_crs(epsg=32754)
 
-    # Drop sightings outside the eight mapped states — usually bad geocodes or offshore points.
+    # Drop sightings outside the eight mapped states: usually bad geocodes or offshore points.
     sightings_joined = gpd.sjoin(
         sightings_projected_gdf,
         state_boundaries_projected_gdf,
@@ -85,7 +85,7 @@ def prepare_spatial_data(df: pd.DataFrame) -> gpd.GeoDataFrame:
         predicate="within",
     ).drop(columns=["index_right"])
 
-    # Assign each sighting to a road segment — aggregation and labelling are per-segment.
+    # Assign each sighting to a road segment: aggregation and labelling are per-segment.
     print("🔄 Calculating distance to the nearest road....")
     sightings_joined = gpd.sjoin_nearest(
         sightings_joined,
@@ -102,13 +102,13 @@ def prepare_spatial_data(df: pd.DataFrame) -> gpd.GeoDataFrame:
         distance_col="distance_to_road",
     ).drop(columns=["index_right"])
 
-    # OSM can yield ties at identical distance (parallel carriageways) — keep one assignment.
+    # OSM can yield ties at identical distance (parallel carriageways): keep one assignment.
     sightings_joined = sightings_joined[
         ~sightings_joined.index.duplicated(keep="first")
     ].copy()
 
     del sightings_projected_gdf, state_boundaries_projected_gdf, road_networks_projected_gdf
-    # Spatial joins materialise large intermediate frames — release before the next species file.
+    # Spatial joins materialise large intermediate frames: release before the next species file.
     gc.collect()
 
     return sightings_joined
@@ -127,13 +127,13 @@ def engineer_features(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     gdf = gdf.copy()
     
-    # Habitat suitability at the observation point — sampled before segment aggregation.
+    # Habitat suitability at the observation point: sampled before segment aggregation.
     gdf["ndvi"] = sample_raster_at_points(gdf)
 
-    # Values above 1.0 are bad pixels or unmasked fill — they would distort habitat scoring.
+    # Values above 1.0 are bad pixels or unmasked fill: they would distort habitat scoring.
     gdf = gdf[gdf["ndvi"] <= 1.0].copy()
 
-    # Round to metres — sub-metre precision is noise once averaged per road segment.
+    # Round to metres: sub-metre precision is noise once averaged per road segment.
     gdf["distance_to_road"] = round(gdf["distance_to_road"].astype(float), 2)
 
     return gdf
@@ -151,7 +151,7 @@ def sample_raster_at_points(gdf: gpd.GeoDataFrame) -> np.array:
     Returns:
         DataFrame with an additional column containing sampled raster values.
     """
-    # Sample via stored lat/lon — NDVI raster is indexed in geographic coordinates, not MGA geometry.
+    # Sample via stored lat/lon: NDVI raster is indexed in geographic coordinates, not MGA geometry.
     coords = list(zip(gdf["longitude"], gdf["latitude"]))
 
     with rasterio.open("data/processed/ndvi_median.tif") as src:
@@ -190,7 +190,7 @@ def engineer_proxy_risk_labels():
     """
     sightings_gdf = gpd.read_parquet("sightings.parquet")
 
-    # Collapse point sightings to segment grain — the ML target is road-segment risk, not per event.
+    # Collapse point sightings to segment grain: the ML target is road-segment risk, not per event.
     road_segment_df = (
         sightings_gdf.groupby("road_segment_id")
         .agg(
@@ -213,7 +213,7 @@ def engineer_proxy_risk_labels():
 
     road_networks_gdf = gpd.read_parquet("data/processed/road_networks.parquet")
 
-    # groupby drops geometry — reattach so spatial lag can use segment adjacency.
+    # groupby drops geometry: reattach so spatial lag can use segment adjacency.
     road_segment_df = road_segment_df.merge(
         road_networks_gdf[["road_segment_id", "geometry"]],
         on="road_segment_id",
@@ -228,7 +228,7 @@ def engineer_proxy_risk_labels():
     del road_segment_df
     gc.collect()
 
-    # Ecological likelihood of wildlife presence — sighting count weighted highest as direct evidence.
+    # Ecological likelihood of wildlife presence: sighting count weighted highest as direct evidence.
     road_segment_gdf["ecological_score"] = (
         0.30 * minmax(road_segment_gdf["sighting_count"])
         + 0.15 * minmax(road_segment_gdf["species_richness"])
@@ -238,7 +238,7 @@ def engineer_proxy_risk_labels():
         + 0.10 * minmax(road_segment_gdf["mean_body_mass_weight"])
     )
 
-    # Infrastructure danger — proximity inverted so segments with closer sightings score higher.
+    # Infrastructure danger: proximity inverted so segments with closer sightings score higher.
     road_segment_gdf["proximity"] = 1 - minmax(road_segment_gdf["mean_distance_to_road"])
     road_segment_gdf["road_exposure_score"] = (
         0.35 * minmax(road_segment_gdf["speed_limit"])
@@ -246,12 +246,12 @@ def engineer_proxy_risk_labels():
         + 0.30 * minmax(road_segment_gdf["traffic_proxy"])
     )
 
-    # Multiplicative form — collision risk needs both wildlife presence AND road exposure.
+    # Multiplicative form: collision risk needs both wildlife presence AND road exposure.
     road_segment_gdf["raw_risk"] = (
         road_segment_gdf["ecological_score"] * road_segment_gdf["road_exposure_score"]
     )
 
-    # Corridor smoothing — animals cross adjacent segments, not isolated polylines.
+    # Corridor smoothing: animals cross adjacent segments, not isolated polylines.
     # k=5 is the smallest neighbourhood that stays connected nationally without over-averaging.
     w = KNN.from_dataframe(road_segment_gdf, k=5)
     w.transform = "r"  # row-standardise so segments with more neighbours are not overweighted
@@ -265,7 +265,7 @@ def engineer_proxy_risk_labels():
         0.7 * road_segment_gdf["raw_risk"] + 0.3 * road_segment_gdf["spatial_lag"]
     )
 
-    # Percentile rank — relative prioritisation scale robust to weight choices and outliers.
+    # Percentile rank: relative prioritisation scale robust to weight choices and outliers.
     road_segment_gdf["proxy_risk"] = road_segment_gdf["blended_risk"].rank(pct=True)
 
     output_path = "data/processed/road_segments.parquet"
@@ -333,12 +333,12 @@ def visualize_road_segments():
     sns.set_theme(style="whitegrid", palette="deep")
     _, ax = plt.subplots(figsize=(12, 10))
 
-    # Context layers only — risk segments are the visual focus.
+    # Context layers only: risk segments are the visual focus.
     state_boundaries_gdf.plot(ax=ax, color="green", alpha=0.2)
     road_networks_gdf.plot(ax=ax, color="black", linewidth=0.5, alpha=0.5)
 
     plot_data = gdf.copy()
-    # Top quintile highlight — map is for prioritisation, not continuous risk gradation.
+    # Top quintile highlight: map is for prioritisation, not continuous risk gradation.
     plot_data["Risk"] = np.where(
         plot_data["proxy_risk"] > 0.8, "High risk", "Low risk"
     )
